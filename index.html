@@ -289,32 +289,23 @@
                     </div>
                 </div>
 
-                <div class="form-group" data-filter-id="registerTime" style="display: none; min-width: 250px;">
+                <div class="form-group" data-filter-id="registerTime" style="display: none; min-width: 280px;">
                     <label>新增時間範圍</label>
-                    <div class="date-range-input">
-                        <div class="date-input-wrapper">
-                            <span>年 / 月 / 日</span>
-                            <i class="ph ph-calendar-blank"></i>
-                        </div>
-                        <span class="date-separator">~</span>
-                        <div class="date-input-wrapper">
-                            <span>年 / 月 / 日</span>
-                            <i class="ph ph-calendar-blank"></i>
-                        </div>
+                    <div class="date-range-container">
+                        <span class="date-text">年 / 月 / 日</span>
+                        <i class="ph ph-calendar-blank"></i>
+                        <span class="date-separator-line">~</span>
+                        <span class="date-text">年 / 月 / 日</span>
+                        <i class="ph ph-calendar-blank"></i>
                     </div>
                 </div>
 
-                <div class="filter-section-header" data-filter-id="securityGroup" style="display: none; width: 100%; margin-top: 12px; margin-bottom: 8px;">
-                    <i class="ph-fill ph-shield-check text-secondary"></i>
-                    <span class="text-md font-semibold text-main">交易與安全維度</span>
-                </div>
-
-                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                <div class="form-group" data-filter-id="bankCard" style="display: none;">
                     <label>綁定銀行卡</label>
                     <input type="text" placeholder="銀行卡號">
                 </div>
 
-                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                <div class="form-group" data-filter-id="notLoginDays" style="display: none;">
                     <label>未登入天數 (大於)</label>
                     <div class="input-with-suffix">
                         <input type="text" placeholder="天數">
@@ -322,12 +313,12 @@
                     </div>
                 </div>
 
-                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                <div class="form-group" data-filter-id="loginIp" style="display: none;">
                     <label>登入 IP 位址</label>
                     <input type="text" placeholder="登入 IP">
                 </div>
 
-                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                <div class="form-group" data-filter-id="depositAmount" style="display: none;">
                     <label>存款金額大於</label>
                     <div class="input-with-prefix">
                         <span class="prefix">$</span>
@@ -668,8 +659,20 @@
                         <span>新增時間範圍</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox" value="securityGroup">
-                        <span>交易與安全維度</span>
+                        <input type="checkbox" value="bankCard">
+                        <span>綁定銀行卡</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="notLoginDays">
+                        <span>未登入天數 (大於)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="loginIp">
+                        <span>登入 IP 位址</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="depositAmount">
+                        <span>存款金額大於</span>
                     </label>
                 </div>
             </div>
