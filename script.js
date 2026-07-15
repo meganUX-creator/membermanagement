@@ -229,24 +229,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     initSingleSelect(dropdownStatus, (val) => {
         selectedStatusVal = val;
-        updateFilters();
-        renderTable();
     });
 
     initSingleSelect(dropdownLevel, (val) => {
         selectedLevelVal = val;
-        updateFilters();
-        renderTable();
     });
 
     initMultiSelect(dropdownVip, () => {
-        updateFilters();
-        renderTable();
     });
 
     initMultiSelect(dropdownOther, () => {
-        updateFilters();
-        renderTable();
     });
 
     // Advanced Filter Controls
@@ -812,25 +804,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Outer fields change listeners to trigger search
     const selectBirthdayOuter = document.getElementById('selectBirthdayOuter');
-    if (selectBirthdayOuter) selectBirthdayOuter.addEventListener('change', () => { updateFilters(); renderTable(); });
     
     const inputDateStartOuter = document.getElementById('inputDateStartOuter');
-    if (inputDateStartOuter) inputDateStartOuter.addEventListener('change', () => { updateFilters(); renderTable(); });
     
     const inputDateEndOuter = document.getElementById('inputDateEndOuter');
-    if (inputDateEndOuter) inputDateEndOuter.addEventListener('change', () => { updateFilters(); renderTable(); });
     
     const inputBankCardOuter = document.getElementById('inputBankCardOuter');
-    if (inputBankCardOuter) inputBankCardOuter.addEventListener('input', () => { updateFilters(); renderTable(); });
     
     const inputOfflineDaysOuter = document.getElementById('inputOfflineDaysOuter');
-    if (inputOfflineDaysOuter) inputOfflineDaysOuter.addEventListener('input', () => { updateFilters(); renderTable(); });
     
     const inputIpOuter = document.getElementById('inputIpOuter');
-    if (inputIpOuter) inputIpOuter.addEventListener('input', () => { updateFilters(); renderTable(); });
     
     const inputDepositOuter = document.getElementById('inputDepositOuter');
-    if (inputDepositOuter) inputDepositOuter.addEventListener('input', () => { updateFilters(); renderTable(); });
 
     // Sticky header with collapsible filter card logic using IntersectionObserver
     const anchor = document.getElementById('filter-scroll-anchor');
