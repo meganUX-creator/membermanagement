@@ -190,9 +190,14 @@
         <div id="filter-scroll-anchor" style="height: 1px; margin-bottom: -1px;"></div>
         <!-- 搜尋過濾區塊 -->
         <section class="filter-card">
-            <div class="filter-header">
-                <i class="ph-fill ph-check-circle text-primary"></i>
-                <span class="text-sm font-semibold text-secondary">常用固定維度 (基本篩選)</span>
+            <div class="filter-header" style="justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="ph-fill ph-check-circle text-primary"></i>
+                    <span class="text-sm font-semibold text-secondary">常用固定維度 (基本篩選)</span>
+                </div>
+                <button class="btn btn-secondary btn-icon" id="btnCustomizeFilter" style="padding: 4px 10px; font-size: 13px; height: auto;">
+                    <i class="ph ph-faders"></i> 自訂篩選
+                </button>
             </div>
 
             <div class="filter-row">
@@ -299,9 +304,6 @@
                 <div class="filter-label" style="align-self: flex-start; padding-top: 6px;">
                     <i class="ph-fill ph-funnel"></i> 當前篩選:
                 </div>
-                <button class="btn btn-secondary btn-icon" id="btnCustomizeFilter" style="padding: 4px 10px; font-size: 13px; height: auto;">
-                    <i class="ph ph-faders"></i> 自訂篩選
-                </button>
                 <div class="filter-tags" id="filterTagsContainer">
                     <!-- Dynamic filter tags will be rendered here -->
                 </div>
