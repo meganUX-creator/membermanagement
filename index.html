@@ -201,7 +201,7 @@
             </div>
 
             <div class="filter-row">
-                <div class="form-group">
+                <div class="form-group" data-filter-id="status">
                     <label>帳號狀態 (原類型分類)</label>
                     <div class="custom-select-single" id="dropdownStatus">
                         <div class="select-selected">
@@ -216,7 +216,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-filter-id="level">
                     <label>用戶層級</label>
                     <div class="custom-select-single" id="dropdownLevel">
                         <div class="select-selected">
@@ -231,7 +231,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-filter-id="vip">
                     <label>會員等級</label>
                     <div class="custom-select-multi" id="dropdownVip">
                         <div class="select-selected">
@@ -249,7 +249,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-filter-id="other">
                     <label>其他條件 (可複選)</label>
                     <div class="custom-select-multi" id="dropdownOther">
                         <div class="select-selected">
@@ -262,6 +262,79 @@
                         </ul>
                     </div>
                 </div>
+
+                <!-- 新增隱藏的過濾欄位 (自訂篩選觸發) -->
+                <div class="form-group" data-filter-id="birthday" style="display: none;">
+                    <label>生日月份</label>
+                    <div class="custom-select-single">
+                        <div class="select-selected">
+                            <span class="selected-val">全部</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <ul class="select-options">
+                            <li data-value="" class="active">全部</li>
+                            <li data-value="1">1月</li>
+                            <li data-value="2">2月</li>
+                            <li data-value="3">3月</li>
+                            <li data-value="4">4月</li>
+                            <li data-value="5">5月</li>
+                            <li data-value="6">6月</li>
+                            <li data-value="7">7月</li>
+                            <li data-value="8">8月</li>
+                            <li data-value="9">9月</li>
+                            <li data-value="10">10月</li>
+                            <li data-value="11">11月</li>
+                            <li data-value="12">12月</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group" data-filter-id="registerTime" style="display: none; min-width: 250px;">
+                    <label>新增時間範圍</label>
+                    <div class="date-range-input">
+                        <div class="date-input-wrapper">
+                            <span>年 / 月 / 日</span>
+                            <i class="ph ph-calendar-blank"></i>
+                        </div>
+                        <span class="date-separator">~</span>
+                        <div class="date-input-wrapper">
+                            <span>年 / 月 / 日</span>
+                            <i class="ph ph-calendar-blank"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section-header" data-filter-id="securityGroup" style="display: none; width: 100%; margin-top: 12px; margin-bottom: 8px;">
+                    <i class="ph-fill ph-shield-check text-secondary"></i>
+                    <span class="text-md font-semibold text-main">交易與安全維度</span>
+                </div>
+
+                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                    <label>綁定銀行卡</label>
+                    <input type="text" placeholder="銀行卡號">
+                </div>
+
+                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                    <label>未登入天數 (大於)</label>
+                    <div class="input-with-suffix">
+                        <input type="text" placeholder="天數">
+                        <span class="suffix">天</span>
+                    </div>
+                </div>
+
+                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                    <label>登入 IP 位址</label>
+                    <input type="text" placeholder="登入 IP">
+                </div>
+
+                <div class="form-group" data-filter-id="securityGroup" style="display: none;">
+                    <label>存款金額大於</label>
+                    <div class="input-with-prefix">
+                        <span class="prefix">$</span>
+                        <input type="text" placeholder="金額">
+                    </div>
+                </div>
+
             </div>
 
             <div class="filter-actions-row">
@@ -556,6 +629,54 @@
         <div class="drawer-footer">
             <button class="btn btn-outline btn-block" id="btnClearDrawer">清空所有</button>
             <button class="btn btn-primary btn-block" id="btnApply">確認套用</button>
+        </div>
+    </div>
+
+    <!-- 自訂篩選彈窗 (Customize Filter Modal) -->
+    <div class="modal-overlay" id="customizeFilterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>自訂篩選維度</h3>
+                <button class="btn-icon btn-close-modal" id="btnCustomizeFilterClose">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="status" checked>
+                        <span>帳號狀態 (原類型分類)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="level" checked>
+                        <span>用戶層級</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="vip" checked>
+                        <span>會員等級</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="other" checked>
+                        <span>其他條件 (可複選)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="birthday">
+                        <span>生日月份</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="registerTime">
+                        <span>新增時間範圍</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="securityGroup">
+                        <span>交易與安全維度</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btnCustomizeFilterCancel">取消</button>
+                <button class="btn btn-primary" id="btnCustomizeFilterConfirm">確認</button>
+            </div>
         </div>
     </div>
 

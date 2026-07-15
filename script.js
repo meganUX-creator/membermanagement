@@ -895,4 +895,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize UI
     updateFilters();
     renderTable();
+
+    // Customize Filter Modal Logic
+    const btnCustomizeFilter = document.getElementById('btnCustomizeFilter');
+    const customizeFilterModal = document.getElementById('customizeFilterModal');
+    const btnCustomizeFilterClose = document.getElementById('btnCustomizeFilterClose');
+    const btnCustomizeFilterCancel = document.getElementById('btnCustomizeFilterCancel');
+    const btnCustomizeFilterConfirm = document.getElementById('btnCustomizeFilterConfirm');
+    
+    if (btnCustomizeFilter && customizeFilterModal) {
+        const openModal = () => customizeFilterModal.classList.add('show');
+        const closeModal = () => customizeFilterModal.classList.remove('show');
+        
+        btnCustomizeFilter.addEventListener('click', openModal);
+        btnCustomizeFilterClose.addEventListener('click', closeModal);
+        btnCustomizeFilterCancel.addEventListener('click', closeModal);
+        
+        // Handle Confirm
+        btnCustomizeFilterConfirm.addEventListener('click', () => {
+            const checkboxes = customizeFilterModal.querySelectorAll('.checkbox-item input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                const filterId = cb.value;
+                const isChecked = cb.checked;
+                
+                // Find all form groups and headers associated with this filter ID
+                const elements = document.querySelectorAll(`[data-filter-id="${filterId}"]`);
+                elements.forEach(el => {
+                    if (isChecked) {
+                        el.style.display = '';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
+            });
+            closeModal();
+        });
+        
+        // Optional: Close modal on outside click
+        customizeFilterModal.addEventListener('click', (e) => {
+            if (e.target === customizeFilterModal) {
+                closeModal();
+            }
+        });
+    }
+
 });
