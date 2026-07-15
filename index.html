@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員管理 Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+
+    <div class="main-layout">
+        <!-- 左側選單 (Sidebar) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="ph-fill ph-user-circle"></i>
+                <span>个人中心</span>
+            </div>
+            <nav class="sidebar-nav">
+                <!-- 用户管理 -->
+                <div class="nav-item-group expanded">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-user-gear"></i>
+                        <span>用户管理</span>
+                        <span class="nav-badge badge-danger">99+</span>
+                        <i class="ph ph-caret-up toggle-arrow"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="#">总代理</a></li>
+                        <li><a href="#">代理</a></li>
+                        <li class="active"><a href="#">会员</a></li>
+                        <li><a href="#">合营代理申请审核</a></li>
+                        <li><a href="#">在线用户</a></li>
+                        <li><a href="#">子账号</a></li>
+                        <li><a href="#">会员等级管理</a></li>
+                        <li><a href="#">成长值配置</a></li>
+                        <li>
+                            <a href="#">VIP相关设定</a>
+                            <span class="nav-badge badge-danger">99+</span>
+                        </li>
+                        <li><a href="#">广告效益数据</a></li>
+                        <li><a href="#">负余额</a></li>
+                    </ul>
+                </div>
+
+                <!-- 标签管理 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-tags"></i>
+                        <span>标签管理</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- 财务管理 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-coins"></i>
+                        <span>财务管理</span>
+                        <span class="nav-badge badge-danger">0</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- 数据报表 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-chart-bar"></i>
+                        <span>数据报表</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- 平台概况 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-chart-pie"></i>
+                        <span>平台概况</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- 运营数据 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-presentation-chart"></i>
+                        <span>运营数据</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- 用户相关 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-identification-card"></i>
+                        <span>用户相关</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- 全民代理 -->
+                <div class="nav-item-group">
+                    <div class="nav-item-header">
+                        <i class="ph-fill ph-users-four"></i>
+                        <span>全民代理</span>
+                        <span class="nav-badge badge-danger">4</span>
+                        <i class="ph ph-caret-down toggle-arrow"></i>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            <!-- 頂部列 (Top Bar) -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <span class="local-time-label">当地时间 : <span id="currentLocalTime">2026/07/15 10:20:47</span></span>
+                </div>
+                <div class="top-bar-right">
+                    <!-- 消息通知 -->
+                    <div class="notification-btn">
+                        <i class="ph-fill ph-bell"></i>
+                    </div>
+                    <!-- 狀態統計與用戶資訊膠囊 -->
+                    <div class="info-capsule">
+                        <div class="capsule-item">
+                            <i class="ph-fill ph-users text-blue-capsule"></i>
+                            <span>在线人数 : <span class="num text-blue-num">33</span></span>
+                        </div>
+                        <div class="capsule-item-divider"></div>
+                        <div class="capsule-item">
+                            <i class="ph-fill ph-chat-centered-text text-orange-capsule"></i>
+                            <span>反馈 : <span class="num text-blue-num">2</span></span>
+                        </div>
+                        <div class="capsule-item-divider"></div>
+                        <div class="capsule-item">
+                            <i class="ph-fill ph-wallet text-cyan-capsule"></i>
+                            <span>充值 : <span class="num text-blue-num">-</span></span>
+                        </div>
+                        <div class="capsule-item-divider"></div>
+                        <div class="capsule-item">
+                            <i class="ph-fill ph-arrow-circle-down text-green-capsule"></i>
+                            <span>提现 : <span class="num text-blue-num">-</span></span>
+                        </div>
+                        <div class="capsule-item-divider"></div>
+                        <div class="user-dropdown">
+                            <i class="ph-fill ph-user-circle"></i>
+                            <span class="username">megan</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                    </div>
+                    <!-- 語言選擇器 -->
+                    <div class="lang-selector">
+                        <span class="flag-icon">🇸🇬</span>
+                        <span>简体中文</span>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 麵包屑與分頁標籤區塊 (Breadcrumbs & Page Tabs) -->
+            <section class="page-header-tabs">
+                <div class="breadcrumb-row">
+                    <div class="breadcrumb-path">
+                        位置 <i class="ph ph-caret-right"></i> 会员
+                    </div>
+                    <div class="tabs-options-dropdown">
+                        <span>标签选项</span>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                </div>
+                <div class="tabs-container">
+                    <div class="tab-item">充值活动管理 <span class="tab-close">×</span></div>
+                    <div class="tab-item active">会员 <span class="tab-close">×</span></div>
+                    <div class="tab-item">用户标签编辑记录 <span class="tab-close">×</span></div>
+                    <div class="tab-item">返水审核 <span class="tab-close">×</span></div>
+                    <div class="tab-item">合营代理申请审核 <span class="tab-close">×</span></div>
+                    <div class="tab-item">在线用户 <span class="tab-close">×</span></div>
+                    <div class="tab-item">子账号 <span class="tab-close">×</span></div>
+                    <div class="tab-item">成长值配置 <span class="tab-close">×</span></div>
+                </div>
+            </section>
+
+            <div class="app-container">
+        <!-- Anchor to detect scroll threshold for sticky filter card -->
+        <div id="filter-scroll-anchor" style="height: 1px; margin-bottom: -1px;"></div>
+        <!-- 搜尋過濾區塊 -->
+        <section class="filter-card">
+            <div class="filter-header">
+                <i class="ph-fill ph-check-circle text-primary"></i>
+                <span class="text-sm font-semibold text-secondary">常用固定維度 (基本篩選)</span>
+            </div>
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label>帳號狀態 (原類型分類)</label>
+                    <div class="custom-select-single" id="dropdownStatus">
+                        <div class="select-selected">
+                            <span class="selected-val">所有</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <ul class="select-options">
+                            <li data-value="" class="active">所有</li>
+                            <li data-value="正常">正常</li>
+                            <li data-value="冻结">冻结</li>
+                            <li data-value="停用">停用</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>用戶層級</label>
+                    <div class="custom-select-single" id="dropdownLevel">
+                        <div class="select-selected">
+                            <span class="selected-val">全部</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <ul class="select-options">
+                            <li data-value="" class="active">全部</li>
+                            <li data-value="普通會員">普通會員</li>
+                            <li data-value="VIP會員">VIP會員</li>
+                            <li data-value="黃金會員">黃金會員</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>會員等級</label>
+                    <div class="custom-select-multi" id="dropdownVip">
+                        <div class="select-selected">
+                            <span class="selected-val">請選擇</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <ul class="select-options">
+                            <li data-value="普通会员"><input type="checkbox"> <span>普通会员</span></li>
+                            <li data-value="白银会员"><input type="checkbox"> <span>白银会员</span></li>
+                            <li data-value="黄金会员"><input type="checkbox"> <span>黄金会员</span></li>
+                            <li data-value="铂金会员"><input type="checkbox"> <span>铂金会员</span></li>
+                            <li data-value="钻石会员"><input type="checkbox"> <span>钻石会员</span></li>
+                            <li data-value="至尊会员"><input type="checkbox"> <span>至尊会员</span></li>
+                            <li data-value="管理员"><input type="checkbox"> <span>管理员</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>其他條件 (可複選)</label>
+                    <div class="custom-select-multi" id="dropdownOther">
+                        <div class="select-selected">
+                            <span class="selected-val">請選擇</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <ul class="select-options">
+                            <li data-value="已充值玩家"><input type="checkbox"> <span>已充值玩家</span></li>
+                            <li data-value="过滤测试账号"><input type="checkbox"> <span>过滤测试账号</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-actions-row">
+                <div class="account-input-group">
+                    <div class="account-type-dropdown" id="accountTypeDropdown">
+                        <div class="dropdown-selected" id="accountTypeSelected">
+                            <i class="ph-fill ph-stack"></i> <span id="accountTypeText">帳號 (精確匹配)</span> <i
+                                class="ph ph-caret-down"></i>
+                        </div>
+                        <ul class="dropdown-menu" id="accountTypeMenu" style="max-height: 250px; overflow-y: auto;">
+                            <li data-value="exact" class="active"><span>帳號 (精確匹配)</span> <span
+                                    class="type-badge">Exact</span></li>
+                            <li data-value="fuzzy"><span>帳號 (模糊匹配)</span> <span class="type-badge">Fuzzy</span></li>
+                            <li data-value="multi"><span>帳號 (多帳號篩選)</span> <span class="type-badge">Multi</span></li>
+                            <li data-value="quickLogin"><span>快速登录帐号</span> <span class="type-badge">Quick</span></li>
+                            <li data-value="uid"><span>用户ID</span> <span class="type-badge">ID</span></li>
+                            <li data-value="inviteCode"><span>邀请码</span> <span class="type-badge">Code</span></li>
+                            <li data-value="nickname"><span>用户昵称</span> <span class="type-badge">Nick</span></li>
+                            <li data-value="realName"><span>真实姓名</span> <span class="type-badge">Name</span></li>
+                            <li data-value="email"><span>邮箱</span> <span class="type-badge">Email</span></li>
+                            <li data-value="phone"><span>手机号</span> <span class="type-badge">Phone</span></li>
+                            <li data-value="zalo"><span>Zalo</span> <span class="type-badge">Zalo</span></li>
+                            <li data-value="facebook"><span>Facebook</span> <span class="type-badge">FB</span></li>
+                            <li data-value="whatsapp"><span>Whatsapp</span> <span class="type-badge">WA</span></li>
+                            <li data-value="telegram"><span>Telegram</span> <span class="type-badge">TG</span></li>
+                            <li data-value="remark"><span>回访备注</span> <span class="type-badge">Note</span></li>
+                            <li data-value="googleCode"><span>谷歌验证码</span> <span class="type-badge">Google</span></li>
+                        </ul>
+                    </div>
+                    <input type="text" id="inputAccount" placeholder="請輸入精確帳號">
+                </div>
+                <button class="btn btn-secondary btn-icon" id="openAdvancedFilter">
+                    <i class="ph ph-faders"></i> 進階篩選條件 <span class="badge" id="advancedBadge">0</span>
+                </button>
+                <button class="btn btn-primary" id="btnSearch">搜尋</button>
+            </div>
+
+            
+            <div class="current-filters">
+                <div class="filter-label" style="align-self: flex-start; padding-top: 6px;">
+                    <i class="ph-fill ph-funnel"></i> 當前篩選:
+                </div>
+                <button class="btn btn-secondary btn-icon" id="btnCustomizeFilter" style="padding: 4px 10px; font-size: 13px; height: auto;">
+                    <i class="ph ph-faders"></i> 自訂篩選
+                </button>
+                <div class="filter-tags" id="filterTagsContainer">
+                    <!-- Dynamic filter tags will be rendered here -->
+                </div>
+                <button class="btn-clear text-danger" id="btnClearAll">
+                    <i class="ph ph-trash"></i> 清除全部
+                </button>
+            </div>
+        </section>
+
+        <!-- 數據統計區塊 -->
+        <div class="stats-panel">
+            <div class="stats-panel-header">
+                <div class="header-title">
+                    <i class="ph ph-chart-line-up"></i>
+                    <span>當前篩選數據彙總 (精簡摘要)</span>
+                </div>
+                <div class="header-badge">數據已排除測試帳號</div>
+            </div>
+            <div class="stats-cards-row">
+                <div class="stat-card">
+                    <div class="card-label">用戶總餘額</div>
+                    <div class="card-value">
+                        <span class="currency">$</span> 15,057.43 T
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="card-label">餘額寶總額</div>
+                    <div class="card-value">
+                        <span class="currency">$</span> 20,417,771
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="card-label">三方遊戲餘額 <i class="ph ph-question info-icon" title="參考值"></i></div>
+                    <div class="card-value">
+                        <span class="currency">$</span> 620,847
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="card-label">今日註冊</div>
+                    <div class="card-value color-primary">
+                        15 <span class="unit">人</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="card-label">今日首充 (有效)</div>
+                    <div class="card-value color-success">
+                        1 <span class="unit">人</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 列表區塊 -->
+        <section class="table-card">
+            <div class="table-header-toolbar">
+                <div class="table-title">
+                    <div class="status-dot"></div>
+                    用戶資料列表 (Mock)
+                </div>
+                <div class="table-actions">
+                    <button class="btn btn-primary"><i class="ph ph-plus"></i> 新增會員</button>
+                    <!-- 批量操作下拉選單 -->
+                    <div class="batch-dropdown-container">
+                        <button class="btn btn-outline" id="btnBatchOperations">批量操作 <i
+                                class="ph ph-caret-down"></i></button>
+                        <ul class="batch-dropdown-menu" id="batchOperationsMenu">
+                            <li>批量更新用戶餘額</li>
+                            <li>批量更新用戶</li>
+                            <li>批量更新用戶狀態</li>
+                            <li>批量代理變更</li>
+                            <li>批量更新最大提款次數</li>
+                        </ul>
+                    </div>
+                    <!-- 導出數據下拉選單 -->
+                    <div class="export-dropdown-container">
+                        <button class="btn btn-outline" id="btnExportData"><i class="ph ph-download-simple"></i> 導出數據 <i
+                                class="ph ph-caret-down"></i></button>
+                        <ul class="export-dropdown-menu" id="exportDataMenu">
+                            <li>導出已篩選用戶</li>
+                            <li>導出用戶數據</li>
+                        </ul>
+                    </div>
+                    <div class="divider"></div>
+                    <button class="btn btn-text">資料驗證</button>
+                    <!-- 欄位設定 -->
+                    <div class="column-toggle-container">
+                        <button class="btn btn-outline btn-icon-only" id="btnColumnToggle" title="欄位設定"><i
+                                class="ph ph-columns"></i></button>
+                        <div class="column-toggle-dropdown" id="columnToggleDropdown">
+                            <div class="dropdown-header-defaults">
+                                <span class="defaults-link" id="resetColumns">My defaults</span>
+                                <i class="ph ph-arrows-counter-clockwise reset-icon"></i>
+                            </div>
+                            <div class="dropdown-search">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" id="columnSearchInput" placeholder="Search columns">
+                            </div>
+                            <ul class="column-list" id="columnList">
+                                <li><label><input type="checkbox" data-column="0" checked> <span>在線</span></label></li>
+                                <li><label><input type="checkbox" data-column="1" checked> <span>頭像</span></label></li>
+                                <li><label><input type="checkbox" data-column="3" checked> <span>會員信息</span></label>
+                                </li>
+                                <li><label><input type="checkbox" data-column="4" checked> <span>等級&團隊</span></label>
+                                </li>
+                                <li><label><input type="checkbox" data-column="5" checked> <span>信用&額度</span></label>
+                                </li>
+                                <li><label><input type="checkbox" data-column="6" checked> <span>存取款</span></label></li>
+                                <li><label><input type="checkbox" data-column="7" checked> <span>標籤</span></label></li>
+                                <li><label><input type="checkbox" data-column="8" checked> <span>狀態</span></label></li>
+                                <li><label><input type="checkbox" data-column="9" checked> <span>日期信息</span></label>
+                                </li>
+                                <li><label><input type="checkbox" data-column="10" checked> <span>備註</span></label></li>
+                                <li><label><input type="checkbox" data-column="11" checked> <span>操作</span></label></li>
+                            </ul>
+                            <div class="dropdown-footer-info">
+                                <span id="visibleColumnsCount">11</span> of 11
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>在線</th>
+                            <th>頭像</th>
+                            <th width="40"><input type="checkbox" id="selectAllCheckbox"></th>
+                            <th>會員信息</th>
+                            <th>等級&團隊</th>
+                            <th>信用&額度</th>
+                            <th>存取款</th>
+                            <th>標籤</th>
+                            <th>狀態</th>
+                            <th>日期信息</th>
+                            <th>備註</th>
+                            <th style="min-width: 260px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Mock rows will be rendered dynamically by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分頁區塊 -->
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    共 <span id="totalCount">8</span> 條
+                </div>
+                <div class="pagination-size-wrapper">
+                    <select id="selectPageSize" class="page-size-select">
+                        <option value="10">10 條/頁</option>
+                        <option value="20">20 條/頁</option>
+                        <option value="50">50 條/頁</option>
+                    </select>
+                </div>
+                <div class="pagination-pages">
+                    <button class="btn-page" disabled><i class="ph ph-caret-left"></i></button>
+                    <button class="btn-page active">1</button>
+                    <button class="btn-page" disabled><i class="ph ph-caret-right"></i></button>
+                </div>
+                <div class="pagination-jump">
+                    前往 <input type="number" min="1" max="1" value="1"> 頁
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+</div>
+
+    <!-- 進階搜尋側邊欄 (Drawer) / 彈窗 (Modal) -->
+    <div class="overlay" id="overlay"></div>
+    <div class="advanced-filter-drawer" id="advancedDrawer">
+        <div class="drawer-header">
+            <h3><i class="ph ph-faders"></i> 進階搜尋條件篩選</h3>
+            <button class="btn-close" id="closeAdvancedFilter"><i class="ph ph-x"></i></button>
+        </div>
+
+        <div class="drawer-content">
+            <!-- Section 1 -->
+            <div class="drawer-section">
+                <h4 class="section-title text-primary"><i class="ph-fill ph-clock"></i> 時間維度與附加選項</h4>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>生日月份</label>
+                        <div class="select-wrapper">
+                            <select id="selectBirthday">
+                                <option value="" selected>全部</option>
+                                <option value="1月">1月</option>
+                                <option value="2月">2月</option>
+                                <option value="3月">3月</option>
+                                <option value="4月">4月</option>
+                                <option value="5月">5月</option>
+                                <option value="6月">6月</option>
+                                <option value="7月">7月</option>
+                                <option value="8月">8月</option>
+                                <option value="9月">9月</option>
+                                <option value="10月">10月</option>
+                                <option value="11月">11月</option>
+                                <option value="12月">12月</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>新增時間範圍</label>
+                        <div class="date-range-input">
+                            <input type="date" id="inputDateStart" value=""
+                                style="border:none; padding:0; width:110px; font-size:12px;">
+                            <span class="separator">~</span>
+                            <input type="date" id="inputDateEnd" value=""
+                                style="border:none; padding:0; width:110px; font-size:12px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Section 3 -->
+            <div class="drawer-section">
+                <h4 class="section-title text-secondary"><i class="ph-fill ph-shield-check"></i> 交易與安全維度</h4>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>綁定銀行卡</label>
+                        <input type="text" id="inputBankCard" value="" placeholder="銀行卡號">
+                    </div>
+                    <div class="form-group">
+                        <label>未登入天數 (大於)</label>
+                        <div class="input-with-suffix">
+                            <input type="text" id="inputOfflineDays" placeholder="天數">
+                            <span>天</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>登入 IP 位址</label>
+                        <input type="text" id="inputIp" value="" placeholder="登入 IP">
+                    </div>
+                    <div class="form-group">
+                        <label>存款金額大於</label>
+                        <div class="input-with-prefix">
+                            <span>$</span>
+                            <input type="text" id="inputDeposit" value="" placeholder="金額">
+                        </div>
+                    </div>
+                </div>
+            </div>近
+        </div>
+
+        <div class="drawer-footer">
+            <button class="btn btn-outline btn-block" id="btnClearDrawer">清空所有</button>
+            <button class="btn btn-primary btn-block" id="btnApply">確認套用</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
