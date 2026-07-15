@@ -226,6 +226,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Custom selections state
     let selectedStatusVal = '';
     let selectedLevelVal = '';
+    let selectedBirthdayOuterVal = '';
+    
+    const dropdownBirthdayOuter = document.getElementById('dropdownBirthdayOuter');
+    if (dropdownBirthdayOuter) {
+        initSingleSelect(dropdownBirthdayOuter, (val) => {
+            selectedBirthdayOuterVal = val;
+        });
+    }
     
     initSingleSelect(dropdownStatus, (val) => {
         selectedStatusVal = val;
@@ -254,6 +262,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputOfflineDays = document.getElementById('inputOfflineDays');
     const inputIp = document.getElementById('inputIp');
     const inputDeposit = document.getElementById('inputDeposit');
+
+    // Outer fields
+    const inputDateStartOuter = document.getElementById('inputDateStartOuter');
+    const inputDateEndOuter = document.getElementById('inputDateEndOuter');
+    const inputBankCardOuter = document.getElementById('inputBankCardOuter');
+    const inputOfflineDaysOuter = document.getElementById('inputOfflineDaysOuter');
+    const inputIpOuter = document.getElementById('inputIpOuter');
+    const inputDepositOuter = document.getElementById('inputDepositOuter');
 
     // Actions & Containers
     const btnSearch = document.getElementById('btnSearch');
@@ -418,6 +434,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inputDeposit.value.trim()) {
             tags.push({ key: 'deposit', label: `存款 > $${inputDeposit.value.trim()}`, type: 'input', element: inputDeposit });
             advancedCount++;
+        }
+
+        // Outer fields processing
+        if (selectedBirthdayOuterVal) {
+            tags.push({ key: 'birthdayOuter', label: `生日: ${selectedBirthdayOuterVal}月`, type: 'single-custom', element: dropdownBirthdayOuter, defaultValue: '', defaultText: '全部', valueVarSetter: (v) => selectedBirthdayOuterVal = v });
+        }
+        if (inputDateStartOuter && inputDateEndOuter && (inputDateStartOuter.value || inputDateEndOuter.value)) {
+            const startStr = inputDateStartOuter.value ? inputDateStartOuter.value : '??';
+            const endStr = inputDateEndOuter.value ? inputDateEndOuter.value : '??';
+            tags.push({ 
+                key: 'dateRangeOuter', 
+                label: `新增時間: ${startStr} ~ ${endStr}`, 
+                type: 'inputs',
+                elements: [inputDateStartOuter, inputDateEndOuter] 
+            });
+        }
+        if (inputBankCardOuter && inputBankCardOuter.value.trim()) {
+            tags.push({ key: 'bankCardOuter', label: `綁定銀行卡: ${inputBankCardOuter.value.trim()}`, type: 'input', element: inputBankCardOuter });
+        }
+        if (inputOfflineDaysOuter && inputOfflineDaysOuter.value.trim()) {
+            tags.push({ key: 'offlineDaysOuter', label: `未登入天數 > ${inputOfflineDaysOuter.value.trim()}`, type: 'input', element: inputOfflineDaysOuter });
+        }
+        if (inputIpOuter && inputIpOuter.value.trim()) {
+            tags.push({ key: 'ipOuter', label: `登入 IP: ${inputIpOuter.value.trim()}`, type: 'input', element: inputIpOuter });
+        }
+        if (inputDepositOuter && inputDepositOuter.value.trim()) {
+            tags.push({ key: 'depositOuter', label: `存款大於 $${inputDepositOuter.value.trim()}`, type: 'input', element: inputDepositOuter });
         }
 
         // Render badge count
@@ -801,21 +844,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTable();
         closeDrawer();
     });
-
-    // Outer fields change listeners to trigger search
-    const selectBirthdayOuter = document.getElementById('selectBirthdayOuter');
-    
-    const inputDateStartOuter = document.getElementById('inputDateStartOuter');
-    
-    const inputDateEndOuter = document.getElementById('inputDateEndOuter');
-    
-    const inputBankCardOuter = document.getElementById('inputBankCardOuter');
-    
-    const inputOfflineDaysOuter = document.getElementById('inputOfflineDaysOuter');
-    
-    const inputIpOuter = document.getElementById('inputIpOuter');
-    
-    const inputDepositOuter = document.getElementById('inputDepositOuter');
 
     // Sticky header with collapsible filter card logic using IntersectionObserver
     const anchor = document.getElementById('filter-scroll-anchor');

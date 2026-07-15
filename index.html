@@ -266,7 +266,7 @@
                 <!-- 新增隱藏的過濾欄位 (自訂篩選觸發) -->
                 <div class="form-group" data-filter-id="birthday" style="display: none;">
                     <label>生日月份</label>
-                    <div class="custom-select-single">
+                    <div class="custom-select-single" id="dropdownBirthdayOuter">
                         <div class="select-selected">
                             <span class="selected-val">全部</span>
                             <i class="ph ph-caret-down"></i>
@@ -292,37 +292,35 @@
                 <div class="form-group" data-filter-id="registerTime" style="display: none; min-width: 280px;">
                     <label>新增時間範圍</label>
                     <div class="date-range-container">
-                        <span class="date-text">年 / 月 / 日</span>
-                        <i class="ph ph-calendar-blank"></i>
+                        <input type="date" class="date-text" id="inputDateStartOuter" style="border:none; outline:none; background:transparent;">
                         <span class="date-separator-line">~</span>
-                        <span class="date-text">年 / 月 / 日</span>
-                        <i class="ph ph-calendar-blank"></i>
+                        <input type="date" class="date-text" id="inputDateEndOuter" style="border:none; outline:none; background:transparent;">
                     </div>
                 </div>
 
                 <div class="form-group" data-filter-id="bankCard" style="display: none;">
                     <label>綁定銀行卡</label>
-                    <input type="text" placeholder="銀行卡號">
+                    <input type="text" placeholder="銀行卡號" id="inputBankCardOuter">
                 </div>
 
                 <div class="form-group" data-filter-id="notLoginDays" style="display: none;">
                     <label>未登入天數 (大於)</label>
                     <div class="input-with-suffix">
-                        <input type="text" placeholder="天數">
+                        <input type="text" placeholder="天數" id="inputOfflineDaysOuter">
                         <span class="suffix">天</span>
                     </div>
                 </div>
 
                 <div class="form-group" data-filter-id="loginIp" style="display: none;">
                     <label>登入 IP 位址</label>
-                    <input type="text" placeholder="登入 IP">
+                    <input type="text" placeholder="登入 IP" id="inputIpOuter">
                 </div>
 
                 <div class="form-group" data-filter-id="depositAmount" style="display: none;">
                     <label>存款金額大於</label>
                     <div class="input-with-prefix">
                         <span class="prefix">$</span>
-                        <input type="text" placeholder="金額">
+                        <input type="text" placeholder="金額" id="inputDepositOuter">
                     </div>
                 </div>
 
