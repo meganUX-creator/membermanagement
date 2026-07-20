@@ -57,6 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Toggle for Filter Test Accounts
+    const filterTestAccountsToggle = document.getElementById('filterTestAccountsToggle');
+    if (filterTestAccountsToggle) {
+        filterTestAccountsToggle.addEventListener('change', () => {
+            updateFilters();
+            renderTable();
+        });
+    }
+
     // Helper: Close all dropdown menus
     function closeAllDropdowns() {
         document.querySelectorAll('.select-options').forEach(el => el.classList.remove('show'));
@@ -287,31 +296,203 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeDrawer() {
         drawer.classList.remove('active');
+        const columnsDrawer = document.getElementById('columnsDrawer');
+        if (columnsDrawer) columnsDrawer.classList.remove('active');
         overlay.classList.remove('active');
     }
 
     openBtn.addEventListener('click', openDrawer);
     closeBtn.addEventListener('click', closeDrawer);
     overlay.addEventListener('click', closeDrawer);
+    document.getElementById('btnColumnsDrawerClose')?.addEventListener('click', closeDrawer);
 
-    // Mock Users Database (Aligned statuses & other tags with new values)
-    const mockUsers = [
-        { uid: "102941", account: "user_test01", realName: "張偉", level: "普通會員", vip: "白银会员", offlineDays: 5, agentId: "AG888", ip: "44.41.2.12", status: "正常", other: "过滤测试账号", birthday: "5月", date: "2026-07-05", quickLogin: "yes", inviteCode: "INV01", nickname: "小張", bankCard: "622202******1234", deposit: 150, tags: ["VIP", "高頻交易"] },
-        { uid: "102942", account: "vip_king", realName: "李娜", level: "VIP會員", vip: "钻石会员", offlineDays: 1, agentId: "AG888", ip: "192.168.1.5", status: "正常", other: "已充值玩家", birthday: "8月", date: "2026-07-10", quickLogin: "no", inviteCode: "INV02", nickname: "娜姐", bankCard: "622202******5678", deposit: 5000, tags: ["大戶", "提現快", "優質"] },
-        { uid: "102943", account: "gold_mine", realName: "王強", level: "黃金會員", vip: "黄金会员", offlineDays: 12, agentId: "AG999", ip: "203.45.12.89", status: "正常", other: "过滤测试账号", birthday: "5月", date: "2026-07-02", quickLogin: "yes", inviteCode: "INV03", nickname: "強哥", bankCard: "622202******9012", deposit: 800, tags: ["信用極佳"] },
-        { uid: "102944", account: "test_temp", realName: "陳靜", level: "普通會員", vip: "白银会员", offlineDays: 45, agentId: "AG111", ip: "8.8.8.8", status: "冻结", other: "过滤测试账号", birthday: "12月", date: "2026-06-25", quickLogin: "no", inviteCode: "INV04", nickname: "小陳", bankCard: "622202******3456", deposit: 50, tags: ["測試帳號", "凍結中"] },
-        { uid: "102945", account: "lucky_star", realName: "劉洋", level: "普通會員", vip: "铂金会员", offlineDays: 0, agentId: "AG888", ip: "44.41.2.12", status: "正常", other: "已充值玩家", birthday: "5月", date: "2026-07-12", quickLogin: "yes", inviteCode: "INV05", nickname: "星星", bankCard: "622202******7890", deposit: 1200, tags: ["首充用戶", "活動愛好者", "高存款", "安全提示"] },
-        { uid: "102946", account: "shadow_agent", realName: "楊光", level: "VIP會員", vip: "钻石会员", offlineDays: 3, agentId: "AG222", ip: "114.114.114.114", status: "正常", other: "过滤测试账号", birthday: "3月", date: "2026-07-01", quickLogin: "yes", inviteCode: "INV06", nickname: "陽光", bankCard: "622202******2345", deposit: 3000, tags: ["新註冊", "代理"] },
-        { uid: "102947", account: "nomad_user", realName: "趙敏", level: "普通會員", vip: "白银会员", offlineDays: 120, agentId: "AG333", ip: "172.16.0.4", status: "停用", other: "过滤测试账号", birthday: "5月", date: "2026-05-15", quickLogin: "no", inviteCode: "INV07", nickname: "敏敏", bankCard: "622202******6789", deposit: 0, tags: ["無活躍"] },
-        { uid: "102948", account: "beta_tester", realName: "黃勇", level: "普通會員", vip: "黄金会员", offlineDays: 2, agentId: "AG888", ip: "44.41.2.12", status: "正常", other: "过滤测试账号", birthday: "5月", date: "2026-07-04", quickLogin: "yes", inviteCode: "INV08", nickname: "阿勇", bankCard: "622202******0123", deposit: 250, tags: ["測試", "一般"] },
-        { uid: "102949", account: "crypto_whale", realName: "周杰", level: "VIP會員", vip: "至尊会员", offlineDays: 0, agentId: "AG999", ip: "12.34.56.78", status: "正常", other: "已充值玩家", birthday: "10月", date: "2026-07-14", quickLogin: "no", inviteCode: "INV09", nickname: "杰倫", bankCard: "622202******4567", deposit: 25000, tags: ["巨鯨", "常在線"] },
-        { uid: "102950", account: "game_master", realName: "吳剛", level: "黃金會員", vip: "黄金会员", offlineDays: 8, agentId: "AG111", ip: "210.33.88.22", status: "正常", other: "已充值玩家", birthday: "2月", date: "2026-07-08", quickLogin: "yes", inviteCode: "INV10", nickname: "剛子", bankCard: "622202******8901", deposit: 1450, tags: ["推廣員"] },
-        { uid: "102951", account: "alpha_one", realName: "鄭少", level: "普通會員", vip: "白银会员", offlineDays: 14, agentId: "AG888", ip: "180.12.33.45", status: "停用", other: "过滤测试账号", birthday: "4月", date: "2026-06-30", quickLogin: "no", inviteCode: "INV11", nickname: "阿少", bankCard: "622202******2340", deposit: 100, tags: ["暫停"] },
-        { uid: "102952", account: "super_star", realName: "孫悟空", level: "VIP會員", vip: "钻石会员", offlineDays: 0, agentId: "AG222", ip: "220.181.38.148", status: "正常", other: "已充值玩家", birthday: "1月", date: "2026-07-15", quickLogin: "yes", inviteCode: "INV12", nickname: "大聖", bankCard: "622202******6780", deposit: 9999, tags: ["高頻交易", "活躍"] },
-        { uid: "102953", account: "piggy_bank", realName: "豬八戒", level: "普通會員", vip: "黄金会员", offlineDays: 18, agentId: "AG333", ip: "116.228.111.45", status: "正常", other: "过滤测试账号", birthday: "6月", date: "2026-07-02", quickLogin: "no", inviteCode: "INV13", nickname: "二師兄", bankCard: "622202******0120", deposit: 50, tags: ["低存款"] },
-        { uid: "102954", account: "monk_sha", realName: "沙悟淨", level: "普通會員", vip: "白银会员", offlineDays: 20, agentId: "AG999", ip: "112.64.12.30", status: "正常", other: "已充值玩家", birthday: "11月", date: "2026-06-28", quickLogin: "no", inviteCode: "INV14", nickname: "三師弟", bankCard: "622202******4560", deposit: 300, tags: ["穩健"] },
-        { uid: "102955", account: "master_tang", realName: "唐三藏", level: "VIP會員", vip: "至尊会员", offlineDays: 1, agentId: "AG111", ip: "101.226.103.6", status: "正常", other: "已充值玩家", birthday: "9月", date: "2026-07-13", quickLogin: "yes", inviteCode: "INV15", nickname: "師父", bankCard: "622202******8900", deposit: 15000, tags: ["大戶", "團隊長"] }
+    // Table Mode & Pagination States
+    let currentTableMode = 'nested'; // 'nested' or 'compact'
+    let currentPage = 1;
+    let pageSize = 20;
+
+    // Sorting State
+    let currentSortColumn = '';
+    let currentSortDirection = ''; // 'asc' or 'desc'
+
+    // Pinning State
+    let pinnedColumnIds = [];
+    let tempPinnedColumnIds = [];
+    
+    // Compact Visibility State
+    let compactColumnVisibility = {};
+    let tempCompactColumnVisibility = {};
+    let nestedDropdownHtml = '';
+    const compactColumnsConfig = [
+        { id: 'uid', group: '基本', label: '用戶ID', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="uid">${user.uid}</td>` },
+        { id: 'account', group: '基本', label: '會員名', checkboxIndex: 3, render: (user) => `<td data-col="account"><a href="#" class="cell-username user-detail-link" data-uid="${user.uid}">${user.account}</a></td>` },
+        { id: 'online', group: '狀態', label: '在線', checkboxIndex: 1, render: (user) => `<td data-col="online"><span class="status-dot-icon" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${user.offlineDays === 0 ? '#10b981' : '#9ca3af'};"></span></td>` },
+        { id: 'avatar', group: '狀態', label: '頭像', checkboxIndex: 2, render: (user) => `<td data-col="avatar"><div class="avatar-cell" style="width:24px;height:24px;border-radius:50%;background:#3b82f6;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;margin:0 auto;">${user.account.charAt(0).toLowerCase()}</div></td>` },
+        { id: 'realName', group: '帳號', label: '真實姓名', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="realName">${user.realName}</td>` },
+        { id: 'nickname', group: '帳號', label: '暱稱', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="nickname">${user.nickname}</td>` },
+        { id: 'agentId', group: '會員信息（詳細）', label: '代理', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="agentId">${user.agentId}</td>` },
+        { id: 'inviter', group: '會員信息（詳細）', label: '邀請人', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="inviter">${user.inviter}</td>` },
+        { id: 'registerMode', group: '會員信息（詳細）', label: '註冊模式', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="registerMode">${user.registerMode}</td>` },
+        { id: 'phone', group: '會員信息（詳細）', label: '手機號', checkboxIndex: 3, render: (user) => `<td class="cell-val" data-col="phone">${user.phone}</td>` },
+        { id: 'payLevel', group: '等級 & 團隊', label: '支付層級', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="payLevel">${user.payLevel}</td>` },
+        { id: 'growth', group: '等級 & 團隊', label: '成長值', sortable: true, checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="growth">${user.growth}</td>` },
+        { id: 'level', group: '等級 & 團隊', label: '等級', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="level">${user.level}</td>` },
+        { id: 'accountType', group: '等級 & 團隊', label: '帳號類型', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="accountType">${user.accountType}</td>` },
+        { id: 'userType', group: '等級 & 團隊', label: '會員類型', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="userType">${user.userType}</td>` },
+        { id: 'inviteCode', group: '等級 & 團隊', label: '邀請碼', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="inviteCode">${user.inviteCode}</td>` },
+        { id: 'directTeam', group: '等級 & 團隊', label: '直屬下級/團隊數', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="directTeam">${user.directTeam}</td>` },
+        { id: 'vipLevel', group: '等級 & 團隊', label: 'VIP等級', checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="vipLevel">${user.vipLevel}</td>` },
+        { id: 'vipGrowth', group: '等級 & 團隊', label: 'VIP成長值', sortable: true, checkboxIndex: 4, render: (user) => `<td class="cell-val" data-col="vipGrowth">${user.vipGrowth}</td>` },
+        { id: 'creditValue', group: '信用 & 額度', label: '信用值', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-val" data-col="creditValue">${user.creditValue}</td>` },
+        { id: 'availableCredit', group: '信用 & 額度', label: '可用額度', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-val" data-col="availableCredit">${user.availableCredit}</td>` },
+        { id: 'commissionBal', group: '信用 & 額度', label: '佣金餘額', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-money ${user.commissionBal > 0 ? 'positive' : ''}" data-col="commissionBal">${user.commissionBal > 0 ? user.commissionBal : '0'}</td>` },
+        { id: 'balanceBuy', group: '信用 & 額度', label: '餘額買', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-money ${user.balanceBuy > 0 ? 'highlight' : ''}" data-col="balanceBuy">${user.balanceBuy > 0 ? user.balanceBuy : '0'}</td>` },
+        { id: 'arrears', group: '信用 & 額度', label: '欠款', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-money ${user.arrears === '0' ? 'negative' : ''}" style="color:${user.arrears === '0' ? '#ef4444' : 'inherit'};" data-col="arrears">${user.arrears}</td>` },
+        { id: 'interest', group: '信用 & 額度', label: '餘額買利息', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-val" data-col="interest">${user.interest}</td>` },
+        { id: 'thirdBal', group: '信用 & 額度', label: '三方餘額', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-val" data-col="thirdBal"><div style="display:flex;align-items:center;">${user.thirdBal > 0 ? user.thirdBal : '0'} <i class="ph ph-arrows-clockwise refresh-icon-compact" data-uid="${user.uid}" title="刷新餘額"></i></div></td>` },
+        { id: 'points', group: '信用 & 額度', label: '會員積分', sortable: true, checkboxIndex: 5, render: (user) => `<td class="cell-val" data-col="points">${user.points}</td>` },
+        { id: 'deposit', group: '存取款', label: '存款總額', sortable: true, checkboxIndex: 6, render: (user) => `<td class="cell-money ${user.deposit > 0 ? 'highlight' : ''}" data-col="deposit">${user.deposit > 0 ? user.deposit : '0'}</td>` },
+        { id: 'withdraw', group: '存取款', label: '取款總額', sortable: true, checkboxIndex: 6, render: (user) => `<td class="cell-money" data-col="withdraw">${user.withdraw > 0 ? user.withdraw : '0'}</td>` },
+        { id: 'withdrawPre', group: '存取款', label: '提款扣金額', sortable: true, checkboxIndex: 6, render: (user) => `<td class="cell-val" data-col="withdrawPre">${user.withdrawPre}</td>` },
+        { id: 'adminDeduct', group: '存取款', label: '後台扣款總額', sortable: true, checkboxIndex: 6, render: (user) => `<td class="cell-val" data-col="adminDeduct">${user.adminDeduct}</td>` },
+        { id: 'depositCount', group: '存取款', label: '存款次數', checkboxIndex: 6, render: (user) => `<td class="cell-val" data-col="depositCount">${user.depositCount}</td>` },
+        { id: 'withdrawCount', group: '存取款', label: '取款次數', checkboxIndex: 6, render: (user) => `<td class="cell-val" data-col="withdrawCount">${user.withdrawCount}</td>` },
+        { id: 'tags', group: '其他', label: '標籤', checkboxIndex: 7, render: (user) => {
+            const colors = ['tag-blue', 'tag-green', 'tag-red', 'tag-yellow', 'tag-purple'];
+            const tagsHtml = user.tags.map((tag, idx) => `<span class="user-custom-tag ${colors[idx % colors.length]}">${tag}</span>`).join('');
+            return `<td data-col="tags"><div style="display:flex; gap:4px; flex-wrap:wrap;">${tagsHtml}</div></td>`;
+        } },
+        { id: 'status', group: '其他', label: '狀態', checkboxIndex: 8, render: (user) => `<td data-col="status"><span class="user-custom-tag ${user.status === '正常' ? 'tag-green' : user.status === '冻结' ? 'tag-blue' : 'tag-red'}">${user.status}</span></td>` },
+        { id: 'date', group: '日期信息', label: '新增時間', sortable: true, checkboxIndex: 9, render: (user) => `<td class="cell-val" data-col="date">${user.date}</td>` },
+        { id: 'lastLogin', group: '日期信息', label: '最後登錄', sortable: true, checkboxIndex: 9, render: (user) => `<td class="cell-val" data-col="lastLogin">${user.lastLogin}</td>` },
+        { id: 'offlineDays', group: '日期信息', label: '離開天數', sortable: true, checkboxIndex: 9, render: (user) => `<td class="cell-val" data-col="offlineDays">${user.offlineDays}</td>` },
+        { id: 'ip', group: '日期信息', label: '登錄IP', checkboxIndex: 9, render: (user) => `<td class="cell-val" data-col="ip"><div class="ip-row" style="display: flex; align-items: center; gap: 4px;"><a href="#" class="ip-link" data-ip="${user.ip}" style="color: var(--primary-color); text-decoration: none;">${user.ip}</a> <i class="ph ph-copy copy-ip-btn" data-ip="${user.ip}" style="cursor: pointer; color: var(--text-muted);" title="複製IP"></i></div></td>` },
+        { id: 'remark', group: '備註', label: '備註', checkboxIndex: 10, render: (user) => `<td class="cell-val" data-col="remark">${user.remark}</td>` },
+        { id: 'followRemark', group: '備註', label: '回訪備註', checkboxIndex: 10, render: (user) => `<td class="cell-val" data-col="followRemark">${user.followRemark}</td>` },
+        { id: 'note', group: '備註', label: '注', checkboxIndex: 10, render: (user) => `<td class="cell-val" data-col="note">${user.note}</td>` },
+        { id: 'action', group: '操作', label: '操作', render: (user) => {
+            return `<td class="sticky-col-right" data-col="action" style="overflow:visible;text-align:center;vertical-align:middle;">
+                <div class="compact-action-container" style="display:inline-flex;align-items:center;justify-content:center;">
+                    <i class="ph ph-dots-three compact-action-icon" style="cursor:pointer;padding:4px;font-size:24px;color:#6b7280;line-height:1;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#6b7280'"></i>
+                </div>
+            </td>`;
+        } }
     ];
+    compactColumnsConfig.forEach(col => { compactColumnVisibility[col.id] = true; });
+
+    // Elements for Table Mode & Pagination
+    const btnModeNested = document.getElementById('btnModeNested');
+    const btnModeCompact = document.getElementById('btnModeCompact');
+    const modeDescriptionText = document.getElementById('modeDescriptionText');
+    const modeNoticeText = document.getElementById('modeNoticeText');
+    const userTable = document.getElementById('userTable');
+    const userTableHeader = document.getElementById('userTableHeader');
+    
+    const selectPageSize = document.getElementById('selectPageSize');
+    const btnPrevPage = document.getElementById('btnPrevPage');
+    const btnNextPage = document.getElementById('btnNextPage');
+    const pageNumbersList = document.getElementById('pageNumbersList');
+    const inputJumpPage = document.getElementById('inputJumpPage');
+
+    // Handle Table Mode Toggle
+    function setTableMode(mode) {
+        currentTableMode = mode;
+        if (mode === 'nested') {
+            btnModeNested.classList.add('active');
+            btnModeCompact.classList.remove('active');
+            modeDescriptionText.textContent = '巢狀結構：分組整合屬性，減少表格欄位寬度';
+            modeNoticeText.innerHTML = '<strong>巢狀模式</strong>：將欄位屬性垂直分組組合，畫面精簡展示。點擊切換為壓縮模式可展開所有獨立列進行橫向比對。';
+            if (userTable) userTable.classList.remove('compact-mode-table');
+        } else {
+            btnModeCompact.classList.add('active');
+            btnModeNested.classList.remove('active');
+            modeDescriptionText.textContent = '壓縮結構：扁平化所有屬性，適合橫向數據比對';
+            modeNoticeText.innerHTML = '<strong>壓縮模式</strong>：所有欄位變成獨立的列，標題只出現在最上方一次，數據按行排列，方便橫向比對，類似 Excel 的視圖。';
+            if (userTable) userTable.classList.add('compact-mode-table');
+        }
+        currentPage = 1;
+        renderTable();
+    }
+
+    if (btnModeNested) btnModeNested.addEventListener('click', () => setTableMode('nested'));
+    if (btnModeCompact) btnModeCompact.addEventListener('click', () => setTableMode('compact'));
+
+    // Handle Page Size Change
+    if (selectPageSize) {
+        selectPageSize.addEventListener('change', (e) => {
+            pageSize = parseInt(e.target.value, 10);
+            currentPage = 1;
+            renderTable();
+        });
+    }
+
+    // Handle Prev / Next Page Click
+    if (btnPrevPage) {
+        btnPrevPage.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+    }
+
+    if (btnNextPage) {
+        btnNextPage.addEventListener('click', () => {
+            currentPage++;
+            renderTable();
+        });
+    }
+
+    // Handle Jump Page Input
+    if (inputJumpPage) {
+        inputJumpPage.addEventListener('change', (e) => {
+            let val = parseInt(e.target.value, 10);
+            if (isNaN(val) || val < 1) val = 1;
+            currentPage = val;
+            renderTable();
+        });
+        inputJumpPage.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                let val = parseInt(e.target.value, 10);
+                if (isNaN(val) || val < 1) val = 1;
+                currentPage = val;
+                renderTable();
+            }
+        });
+    }
+
+    // Comprehensive Mock Users Database (50 Users for pagination demonstration)
+    const baseMockUsers = [
+        { uid: "1239361225", account: "mingv0717001", realName: "-", nickname: "mi***01", agentId: "dl", inviter: "-", registerMode: "一般註冊", phone: "末綁定", payLevel: "默認層", growth: 0, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "-", directTeam: "0/0", vipLevel: 0, vipGrowth: 0, creditValue: 0, availableCredit: 0, commissionBal: 0, balanceBuy: 0, arrears: "-", interest: 0, thirdBal: 0, points: 0, deposit: 0, withdraw: 0, withdrawPre: "-", adminDeduct: "-", depositCount: 0, withdrawCount: 0, tags: ["正常"], status: "冻结", date: "2023-01-01 12:00:00", lastLogin: "2023-01-10 15:30:00", offlineDays: 9, ip: "192.168.1.1", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361224", account: "albertvn021", realName: "-", nickname: "al***21", agentId: "nnest123556", inviter: "nnest123556", registerMode: "一般註冊", phone: "未驗證", payLevel: "默認層", growth: 0, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "06077790", directTeam: "0/0", vipLevel: 0, vipGrowth: 0, creditValue: 0, availableCredit: 0, commissionBal: 0, balanceBuy: 0, arrears: "-", interest: 0, thirdBal: 0, points: 0, deposit: 0, withdraw: 0, withdrawPre: "-", adminDeduct: "-", depositCount: 0, withdrawCount: 0, tags: ["正常"], status: "停用", date: "2023-01-02 10:00:00", lastLogin: "2023-01-11 09:20:00", offlineDays: 9, ip: "192.168.1.2", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361223", account: "vip_king", realName: "李娜", nickname: "鄭姐", agentId: "AG888", inviter: "nnest123556", registerMode: "一般註冊", phone: "138****8888", payLevel: "默認層", growth: 1250, level: "鑽石會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "INV02", directTeam: "12/8", vipLevel: 3, vipGrowth: 6800, creditValue: 500, availableCredit: 2000, commissionBal: 680, balanceBuy: 8750, arrears: "0", interest: 120, thirdBal: 320, points: 450, deposit: 3200, withdraw: 1500, withdrawPre: "-", adminDeduct: "-", depositCount: 8, withdrawCount: 4, tags: ["VIP", "已充值玩家"], status: "冻结", date: "2023-01-05 14:15:00", lastLogin: "2023-01-15 18:45:00", offlineDays: 0, ip: "192.168.1.3", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361226", account: "test_user_1", realName: "陳大文", nickname: "tu***00", agentId: "dl", inviter: "nnest123556", registerMode: "後台新增", phone: "未驗證", payLevel: "默認層", growth: 0, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "CODE100", directTeam: "0/0", vipLevel: 0, vipGrowth: 0, creditValue: 500, availableCredit: 0, commissionBal: 0, balanceBuy: 0, arrears: "0", interest: 0, thirdBal: 150, points: 0, deposit: 0, withdraw: 0, withdrawPre: "-", adminDeduct: "-", depositCount: 0, withdrawCount: 0, tags: ["VIP", "活躍"], status: "停用", date: "2023-02-01 10:00:00", lastLogin: "2023-03-01 15:30:00", offlineDays: 30, ip: "192.168.2.10", remark: "大戶需關注", followRemark: "-", note: "-" },
+        { uid: "1239361227", account: "test_user_2", realName: "-", nickname: "tu***01", agentId: "AG888", inviter: "-", registerMode: "一般註冊", phone: "139****1001", payLevel: "默認層", growth: 150, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "-", directTeam: "1/1", vipLevel: 1, vipGrowth: 50, creditValue: 0, availableCredit: 1000, commissionBal: 15, balanceBuy: 300, arrears: "0", interest: 2, thirdBal: 0, points: 25, deposit: 2000, withdraw: 500, withdrawPre: "-", adminDeduct: "-", depositCount: 1, withdrawCount: 1, tags: ["正常"], status: "停用", date: "2023-02-02 10:00:00", lastLogin: "2023-03-02 15:30:00", offlineDays: 1, ip: "192.168.2.11", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361228", account: "test_user_3", realName: "-", nickname: "tu***02", agentId: "nnest123556", inviter: "nnest123556", registerMode: "一般註冊", phone: "139****1002", payLevel: "默認層", growth: 300, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "CODE102", directTeam: "2/2", vipLevel: 2, vipGrowth: 100, creditValue: 500, availableCredit: 2000, commissionBal: 30, balanceBuy: 600, arrears: "0", interest: 4, thirdBal: 0, points: 50, deposit: 4000, withdraw: 1000, withdrawPre: "-", adminDeduct: "-", depositCount: 2, withdrawCount: 2, tags: ["正常"], status: "冻结", date: "2023-02-03 10:00:00", lastLogin: "2023-03-03 15:30:00", offlineDays: 2, ip: "192.168.2.12", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361229", account: "test_user_4", realName: "陳大文", nickname: "tu***03", agentId: "dl", inviter: "-", registerMode: "一般註冊", phone: "139****1003", payLevel: "默認層", growth: 450, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "-", directTeam: "3/0", vipLevel: 3, vipGrowth: 150, creditValue: 0, availableCredit: 3000, commissionBal: 45, balanceBuy: 900, arrears: "0", interest: 6, thirdBal: 0, points: 75, deposit: 6000, withdraw: 1500, withdrawPre: "-", adminDeduct: "-", depositCount: 3, withdrawCount: 3, tags: ["正常"], status: "冻结", date: "2023-02-04 10:00:00", lastLogin: "2023-03-04 15:30:00", offlineDays: 3, ip: "192.168.2.13", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361230", account: "test_user_5", realName: "-", nickname: "tu***04", agentId: "AG888", inviter: "nnest123556", registerMode: "後台新增", phone: "139****1004", payLevel: "默認層", growth: 600, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "CODE104", directTeam: "4/1", vipLevel: 0, vipGrowth: 200, creditValue: 500, availableCredit: 4000, commissionBal: 60, balanceBuy: 1200, arrears: "0", interest: 8, thirdBal: 150, points: 100, deposit: 8000, withdraw: 2000, withdrawPre: "-", adminDeduct: "-", depositCount: 4, withdrawCount: 4, tags: ["正常"], status: "冻结", date: "2023-02-05 10:00:00", lastLogin: "2023-03-05 15:30:00", offlineDays: 4, ip: "192.168.2.14", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361231", account: "test_user_6", realName: "-", nickname: "tu***05", agentId: "nnest123556", inviter: "-", registerMode: "一般註冊", phone: "未驗證", payLevel: "默認層", growth: 750, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "-", directTeam: "0/2", vipLevel: 1, vipGrowth: 250, creditValue: 0, availableCredit: 5000, commissionBal: 75, balanceBuy: 1500, arrears: "0", interest: 10, thirdBal: 0, points: 125, deposit: 10000, withdraw: 2500, withdrawPre: "-", adminDeduct: "-", depositCount: 5, withdrawCount: 5, tags: ["正常"], status: "正常", date: "2023-02-06 10:00:00", lastLogin: "2023-03-06 15:30:00", offlineDays: 5, ip: "192.168.2.15", remark: "-", followRemark: "-", note: "-" },
+        { uid: "1239361232", account: "test_user_7", realName: "陳大文", nickname: "tu***06", agentId: "dl", inviter: "nnest123556", registerMode: "一般註冊", phone: "139****1006", payLevel: "默認層", growth: 900, level: "普通會員", accountType: "普通帳號", userType: "代理會員", inviteCode: "CODE106", directTeam: "1/0", vipLevel: 2, vipGrowth: 300, creditValue: 500, availableCredit: 6000, commissionBal: 90, balanceBuy: 1800, arrears: "0", interest: 12, thirdBal: 0, points: 150, deposit: 12000, withdraw: 3000, withdrawPre: "-", adminDeduct: "-", depositCount: 6, withdrawCount: 0, tags: ["VIP", "活躍"], status: "冻结", date: "2023-02-07 10:00:00", lastLogin: "2023-03-07 15:30:00", offlineDays: 6, ip: "192.168.2.16", remark: "-", followRemark: "-", note: "-" }
+    ];
+
+    // Generate 50 items to ensure pagination works smoothly with 20 items per page
+    const mockUsers = [];
+    for (let i = 0; i < 5; i++) {
+        baseMockUsers.forEach((user, index) => {
+            const num = (i * 10) + index + 1;
+            const newUid = (parseInt(user.uid, 10) + i * 100).toString();
+            const newAccount = i === 0 ? user.account : `${user.account}_${i}`;
+            mockUsers.push({
+                ...user,
+                uid: newUid,
+                account: newAccount,
+                offlineDays: (user.offlineDays + i) % 15,
+                other: index % 2 === 0 ? "已充值玩家" : "过滤测试账号",
+                vip: index % 3 === 0 ? "钻石会员" : index % 3 === 1 ? "黄金会员" : "白银会员",
+                level: index % 3 === 0 ? "VIP會員" : index % 3 === 1 ? "黃金會員" : "普通會員"
+            });
+        });
+    }
 
     // Helper: Get active selections from multi-select
     function getMultiSelectValues(element) {
@@ -381,6 +562,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentAccountType === 'multi') labelPrefix = '帳號(多筆)';
             
             tags.push({ key: 'account', label: `${labelPrefix}: ${inputAccount.value.trim()}`, type: 'input', element: inputAccount });
+        }
+        
+        // 6. Test Accounts Toggle
+        if (filterTestAccountsToggle && filterTestAccountsToggle.checked) {
+            tags.push({ key: 'filterTestAccounts', label: `過濾測試賬號`, type: 'checkbox', element: filterTestAccountsToggle });
         }
 
         // Advanced filter fields
@@ -486,9 +672,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     tag.elements.forEach(el => el.value = '');
                 } else if (tag.type === 'native-select') {
                     tag.element.value = '';
+                } else if (tag.type === 'checkbox') {
+                    tag.element.checked = false;
                 } else {
                     tag.element.value = '';
                 }
+                currentPage = 1;
                 updateFilters();
                 renderTable();
             });
@@ -503,6 +692,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset selectors
         setSingleSelectValue(dropdownStatus, '', '所有');
         selectedStatusVal = '';
+        
+        if (filterTestAccountsToggle) filterTestAccountsToggle.checked = false;
         
         setSingleSelectValue(dropdownLevel, '', '全部');
         selectedLevelVal = '';
@@ -525,6 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputIp.value = '';
         inputDeposit.value = '';
 
+        currentPage = 1;
         updateFilters();
         renderTable();
     }
@@ -545,17 +737,18 @@ document.addEventListener('DOMContentLoaded', () => {
         inputIp.value = '';
         inputDeposit.value = '';
         
+        currentPage = 1;
         updateFilters();
         renderTable();
     });
 
-    // Render Table Data
+    // Render Table Data & Headers
     function renderTable() {
         const selectedVips = getMultiSelectValues(dropdownVip);
         const selectedOthers = getMultiSelectValues(dropdownOther);
         const accountVal = inputAccount.value.trim().toLowerCase();
 
-        // Advanced filter values (Checking both drawer inputs and outer inputs)
+        // Advanced filter values
         const selectBirthdayOuter = document.getElementById('selectBirthdayOuter');
         const inputDateStartOuter = document.getElementById('inputDateStartOuter');
         const inputDateEndOuter = document.getElementById('inputDateEndOuter');
@@ -584,7 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedVips.length > 0 && !selectedVips.includes(user.vip)) return false;
             if (selectedOthers.length > 0 && !selectedOthers.includes(user.other)) return false;
             
-            // Account filter with match type logic
+            // Account filter
             if (accountVal) {
                 if (currentAccountType === 'exact') {
                     if (user.account.toLowerCase() !== accountVal) return false;
@@ -604,7 +797,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (currentAccountType === 'realName') {
                     if (!user.realName || !user.realName.toLowerCase().includes(accountVal)) return false;
                 } else {
-                    // For mock properties (email, phone, zalo, fb, wa, tg, remark, googleCode)
                     if (user[currentAccountType] && !user[currentAccountType].toLowerCase().includes(accountVal)) return false;
                 }
             }
@@ -626,138 +818,431 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         });
 
-        // Generate Rows HTML
-        const totalCountSpan = document.getElementById('totalCount');
-        if (totalCountSpan) {
-            totalCountSpan.textContent = filtered.length;
+        // Sorting Logic
+        if (currentSortColumn) {
+            filtered.sort((a, b) => {
+                let valA = a[currentSortColumn];
+                let valB = b[currentSortColumn];
+                
+                // Handle numeric conversion for arrears (e.g. "-" or numbers)
+                if (currentSortColumn === 'arrears') {
+                    valA = valA === '-' ? 0 : parseFloat(valA) || 0;
+                    valB = valB === '-' ? 0 : parseFloat(valB) || 0;
+                } else if (typeof valA === 'string' && typeof valB === 'string') {
+                    // Try to parse as numbers if possible
+                    const numA = parseFloat(valA);
+                    const numB = parseFloat(valB);
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        valA = numA;
+                        valB = numB;
+                    }
+                }
+
+                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
         }
 
+        // Calculate Pagination Slicing
+        const totalCount = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, totalCount);
+        const pagedUsers = filtered.slice(startIndex, endIndex);
+
+        // Update Total Count & Pagination Controls
+        const totalCountSpan = document.getElementById('totalCount');
+        if (totalCountSpan) totalCountSpan.textContent = totalCount;
+
+        if (btnPrevPage) btnPrevPage.disabled = (currentPage === 1);
+        if (btnNextPage) btnNextPage.disabled = (currentPage === totalPages || totalPages === 0);
+        if (inputJumpPage) {
+            inputJumpPage.value = currentPage;
+            inputJumpPage.max = totalPages;
+        }
+
+        // Render Page Numbers
+        if (pageNumbersList) {
+            pageNumbersList.innerHTML = '';
+            const maxVisibleButtons = 5;
+            let startP = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+            let endP = Math.min(totalPages, startP + maxVisibleButtons - 1);
+            if (endP - startP + 1 < maxVisibleButtons) {
+                startP = Math.max(1, endP - maxVisibleButtons + 1);
+            }
+
+            for (let p = startP; p <= endP; p++) {
+                const btn = document.createElement('button');
+                btn.className = `btn-page ${p === currentPage ? 'active' : ''}`;
+                btn.textContent = p;
+                btn.addEventListener('click', () => {
+                    currentPage = p;
+                    renderTable();
+                });
+                pageNumbersList.appendChild(btn);
+            }
+        }
+
+        // Helper for Sort Icons
+        function getSortBtn(col) {
+            const isActive = currentSortColumn === col;
+            const isAsc = isActive && currentSortDirection === 'asc';
+            const isDesc = isActive && currentSortDirection === 'desc';
+            return `<button type="button" class="sort-btn ${isAsc ? 'active-asc' : ''} ${isDesc ? 'active-desc' : ''}" data-sort="${col}">
+                <i class="ph-fill ph-caret-${isDesc ? 'down' : 'up'}"></i>
+            </button>`;
+        }
+
+        // Render Table Headers according to Table Mode
+        if (userTableHeader) {
+            if (currentTableMode === 'nested') {
+                userTableHeader.innerHTML = `
+                    <tr>
+                        <th width="40"><input type="checkbox" id="selectAllCheckbox"></th>
+                        <th>在線</th>
+                        <th>頭像</th>
+                        <th>會員信息</th>
+                        <th>等級&團隊</th>
+                        <th>信用&額度</th>
+                        <th>存取款</th>
+                        <th>標籤</th>
+                        <th>狀態</th>
+                        <th>日期信息</th>
+                        <th>備註</th>
+                        <th style="min-width: 260px;">操作</th>
+                    </tr>
+                `;
+            } else {
+                // Compact Mode: 2-tier Headers with dynamic groups and pinning
+                const pinned = [];
+                const unpinned = [];
+                
+                const visibleColumnsConfig = compactColumnsConfig.filter(col => compactColumnVisibility[col.id]);
+                
+                visibleColumnsConfig.forEach(col => {
+                    if (pinnedColumnIds.includes(col.id)) {
+                        pinned.push(col);
+                    } else {
+                        unpinned.push(col);
+                    }
+                });
+
+                let groupRowHtml = `<th class="header-group sticky-col sticky-col-1" rowspan="2" width="40" style="left:0; z-index:12;"><input type="checkbox" id="selectAllCheckboxCompact"></th>`;
+                let subRowHtml = ``;
+
+                let currentLeft = 40; // Starts after checkbox
+
+                // Pinned headers span both rows (rowspan="2")
+                pinned.forEach(col => {
+                    groupRowHtml += `<th class="header-group sticky-col" rowspan="2" style="left:${currentLeft}px; min-width:110px; z-index:12;" data-col="${col.id}">
+                        <div style="display:flex;align-items:center;white-space:nowrap;justify-content:space-between;">
+                            <div style="display:flex;align-items:center;">
+                                <span>${col.label}</span>
+                                ${col.sortable ? getSortBtn(col.id) : ''}
+                            </div>
+                            <i class="ph ph-push-pin icon-pin active" data-id="${col.id}" title="取消釘選"></i>
+                        </div>
+                    </th>`;
+                    currentLeft += 110;
+                });
+
+                // Action header (fixed on the right)
+                const actionCol = visibleColumnsConfig.find(col => col.id === 'action');
+                let actionHeaderHtml = '';
+                if (actionCol) {
+                    actionHeaderHtml = `<th class="header-group sticky-col-right" rowspan="2" data-col="action" style="min-width: 60px; z-index:12;">
+                        <div style="display:flex;align-items:center;white-space:nowrap;justify-content:center;">
+                            <span>${actionCol.label}</span>
+                        </div>
+                    </th>`;
+                }
+
+                // Unpinned headers grouped sequentially
+                let currentGroup = '';
+                let groupColSpan = 0;
+                
+                const unpinnedWithoutAction = unpinned.filter(col => col.id !== 'action');
+                unpinnedWithoutAction.forEach(col => {
+                    if (col.group !== currentGroup) {
+                        if (currentGroup !== '') {
+                            groupRowHtml += `<th class="header-group" colspan="${groupColSpan}">${currentGroup}</th>`;
+                        }
+                        currentGroup = col.group;
+                        groupColSpan = 1;
+                    } else {
+                        groupColSpan++;
+                    }
+
+                    subRowHtml += `<th class="header-sub" data-col="${col.id}">
+                        <div style="display:flex;align-items:center;white-space:nowrap;justify-content:space-between;">
+                            <div style="display:flex;align-items:center;">
+                                <span>${col.label}</span>
+                                ${col.sortable ? getSortBtn(col.id) : ''}
+                            </div>
+                            <i class="ph ph-push-pin icon-pin" data-id="${col.id}" title="釘選欄位"></i>
+                        </div>
+                    </th>`;
+                });
+
+                if (currentGroup !== '') {
+                    groupRowHtml += `<th class="header-group" colspan="${groupColSpan}">${currentGroup}</th>`;
+                }
+
+                if (actionHeaderHtml) {
+                    groupRowHtml += actionHeaderHtml;
+                }
+
+                userTableHeader.innerHTML = `
+                    <tr class="header-group-row">${groupRowHtml}</tr>
+                    <tr class="header-sub-row">${subRowHtml}</tr>
+                `;
+            }
+        }
+
+        // Render Table Body
         userTableBody.innerHTML = '';
-        if (filtered.length === 0) {
-            userTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 32px 0;">無符合篩選條件的會員資料</td></tr>`;
+        if (pagedUsers.length === 0) {
+            const colspan = currentTableMode === 'nested' ? 12 : 43;
+            userTableBody.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: var(--text-muted); padding: 32px 0;">無符合篩選條件的會員資料</td></tr>`;
             return;
         }
 
-        filtered.forEach(user => {
+        pagedUsers.forEach(user => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><span class="badge-online ${user.offlineDays === 0 ? 'online' : 'offline'}">${user.offlineDays === 0 ? '在線' : '離線'}</span></td>
-                <td>
-                    <div class="avatar-cell">
-                        <i class="ph-fill ph-user"></i>
-                    </div>
-                </td>
-                <td><input type="checkbox" class="user-checkbox"></td>
-                <td>
-                    <div class="info-cell">
-                        <div><span class="info-label">用戶ID :</span> ${user.uid}</div>
-                        <div><span class="info-label">會員名 :</span> ${user.account}</div>
-                        <div><span class="info-label">真實姓名 :</span> ${user.realName}</div>
-                        <div><span class="info-label">用戶暱稱 :</span> ${user.nickname}</div>
-                        <div><span class="info-label">代理 :</span> ${user.agentId}</div>
-                        <div><span class="info-label">邀請人 :</span> nntest123556</div>
-                        <div><span class="info-label">註冊模式 :</span> 一般註冊</div>
-                        <div><span class="info-label">手機號 :</span> 未綁定</div>
-                    </div>
-                </td>
-                <td>
-                    <div class="info-cell">
-                        <div><span class="info-label">支付層級 :</span> 默認層</div>
-                        <div><span class="info-label">成長值 :</span> 0</div>
-                        <div><span class="info-label">等級 :</span> ${user.vip}</div>
-                        <div><span class="info-label">帳號類型 :</span> 普通帳號</div>
-                        <div><span class="info-label">會員類型 :</span> 代理會員</div>
-                        <div><span class="info-label">邀請碼 :</span> ${user.inviteCode}</div>
-                        <div><span class="info-label">直屬下級/團隊人數 :</span> 0/0</div>
-                        <div><span class="info-label">VIP會員等級 :</span> 0</div>
-                        <div><span class="info-label">VIP成長值 :</span> 0</div>
-                    </div>
-                </td>
-                <td>
-                    <div class="info-cell">
-                        <div><span class="info-label">信用值 :</span> 0</div>
-                        <div><span class="info-label">可用額度 :</span> 0</div>
-                        <div><span class="info-label">佣金餘額 :</span> 0</div>
-                        <div><span class="info-label">餘額寶 :</span> 0</div>
-                        <div><span class="info-label">欠款 :</span> -</div>
-                        <div><span class="info-label">餘額寶利息 :</span> 0</div>
-                        <div><span class="info-label">三方餘額 :</span> 0 <a href="#" class="refresh-link">刷新</a></div>
-                        <div><span class="info-label">會員積分 :</span> 0</div>
-                    </div>
-                </td>
-                <td>
-                    <div class="info-cell">
-                        <div><span class="info-label">存款總額 :</span> ${user.deposit}</div>
-                        <div><span class="info-label">取款總額 :</span> 0</div>
-                        <div><span class="info-label">提款預扣金額 :</span> 0</div>
-                        <div><span class="info-label">后台加款總額 :</span> -</div>
-                        <div><span class="info-label">后台扣款總額 :</span> -</div>
-                        <div><span class="info-label">存款次數 :</span> ${user.deposit > 0 ? 1 : 0}</div>
-                        <div><span class="info-label">取款次數 :</span> 0</div>
-                    </div>
-                </td>
-                <td>
-                    <div class="user-tags-container">
-                        ${(function() {
-                            if (!user.tags || user.tags.length === 0) return '';
-                            const colors = ['tag-blue', 'tag-green', 'tag-red', 'tag-yellow', 'tag-purple'];
-                            let html = '';
-                            user.tags.slice(0, 2).forEach((tag, idx) => {
-                                const colorClass = colors[idx % colors.length];
-                                html += `<span class="user-custom-tag ${colorClass}">${tag}</span>`;
-                            });
-                            if (user.tags.length > 2) {
-                                html += `<span class="user-custom-tag tag-more" title="${user.tags.slice(2).join(', ')}">+</span>`;
-                            }
-                            return html;
-                        })()}
-                    </div>
-                </td>
-                <td><span class="status-label status-${user.status === '正常' ? 'active' : user.status === '冻结' ? 'frozen' : 'disabled'}">${user.status}</span></td>
-                <td>
-                    <div class="info-cell">
-                        <div><span class="info-label">新增時間 :</span> ${user.date} 12:51</div>
-                        <div><span class="info-label">最後登錄 :</span> ${user.offlineDays === 0 ? '今天12:51:38' : '3天前'}</div>
-                        <div><span class="info-label">離開天數 :</span> ${user.offlineDays}天</div>
-                        <div><span class="info-label">登錄IP :</span></div>
-                        <div class="ip-row">${user.ip} <i class="ph ph-link text-primary-link"></i> <i class="ph ph-copy text-primary-link"></i></div>
-                    </div>
-                </td>
-                <td>
-                    <div class="info-cell">
-                        <div><span class="info-label">備註 :</span> -</div>
-                        <div><span class="info-label">回訪備註 :</span> -</div>
-                        <div><span class="info-label">注 :</span> -</div>
-                    </div>
-                </td>
-                <td>
-                    <div class="operations-grid">
-                        <a href="#" class="op-link">編輯用戶</a>
-                        <a href="#" class="op-link">查看詳情</a>
-                        <a href="#" class="op-link">額度修改</a>
-                        <a href="#" class="op-link">資金明細</a>
-                        <a href="#" class="op-link">注單明細</a>
-                        <a href="#" class="op-link">修改密碼</a>
-                        <a href="#" class="op-link">下級會員</a>
-                        <a href="#" class="op-link">下級報表</a>
-                        <a href="#" class="op-link">下級注單</a>
-                        <button class="btn-more">更多...</button>
-                    </div>
-                </td>
-            `;
+
+            if (currentTableMode === 'nested') {
+                // Nested Mode Layout (Grouped Cells)
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="user-checkbox"></td>
+                    <td><span class="badge-online ${user.offlineDays === 0 ? 'online' : 'offline'}">${user.offlineDays === 0 ? '在線' : '離線'}</span></td>
+                    <td>
+                        <div class="avatar-cell">
+                            <i class="ph-fill ph-user"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-cell">
+                            <div><span class="info-label">用戶ID :</span> ${user.uid}</div>
+                            <div><span class="info-label">會員名 :</span> <a href="#" class="user-detail-link" data-uid="${user.uid}">${user.account}</a></div>
+                            <div><span class="info-label">真實姓名 :</span> ${user.realName}</div>
+                            <div><span class="info-label">用戶暱稱 :</span> ${user.nickname}</div>
+                            <div><span class="info-label">代理 :</span> ${user.agentId}</div>
+                            <div><span class="info-label">邀請人 :</span> ${user.inviter}</div>
+                            <div><span class="info-label">註冊模式 :</span> ${user.registerMode}</div>
+                            <div><span class="info-label">手機號 :</span> ${user.phone}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-cell">
+                            <div><span class="info-label">支付層級 :</span> ${user.payLevel}</div>
+                            <div><span class="info-label">成長值 :</span> ${user.growth}</div>
+                            <div><span class="info-label">等級 :</span> ${user.level}</div>
+                            <div><span class="info-label">帳號類型 :</span> ${user.accountType}</div>
+                            <div><span class="info-label">會員類型 :</span> ${user.userType}</div>
+                            <div><span class="info-label">邀請碼 :</span> ${user.inviteCode}</div>
+                            <div><span class="info-label">直屬下級/團隊人數 :</span> ${user.directTeam}</div>
+                            <div><span class="info-label">VIP會員等級 :</span> ${user.vipLevel}</div>
+                            <div><span class="info-label">VIP成長值 :</span> ${user.vipGrowth}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-cell">
+                            <div><span class="info-label">信用值 :</span> ${user.creditValue}</div>
+                            <div><span class="info-label">可用額度 :</span> ${user.availableCredit}</div>
+                            <div><span class="info-label">佣金餘額 :</span> ${user.commissionBal}</div>
+                            <div><span class="info-label">餘額寶 :</span> ${user.balanceBuy}</div>
+                            <div><span class="info-label">欠款 :</span> ${user.arrears}</div>
+                            <div><span class="info-label">餘額寶利息 :</span> ${user.interest}</div>
+                            <div><span class="info-label">三方餘額 :</span> ${user.thirdBal} <a href="#" class="refresh-link">刷新</a></div>
+                            <div><span class="info-label">會員積分 :</span> ${user.points}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-cell">
+                            <div><span class="info-label">存款總額 :</span> ${user.deposit}</div>
+                            <div><span class="info-label">取款總額 :</span> ${user.withdraw}</div>
+                            <div><span class="info-label">提款預扣金額 :</span> ${user.withdrawPre}</div>
+                            <div><span class="info-label">后台扣款總額 :</span> ${user.adminDeduct}</div>
+                            <div><span class="info-label">存款次數 :</span> ${user.depositCount}</div>
+                            <div><span class="info-label">取款次數 :</span> ${user.withdrawCount}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="user-tags-container">
+                            ${(function() {
+                                if (!user.tags || user.tags.length === 0) return '';
+                                const colors = ['tag-blue', 'tag-green', 'tag-red', 'tag-yellow', 'tag-purple'];
+                                let html = '';
+                                user.tags.slice(0, 2).forEach((tag, idx) => {
+                                    const colorClass = colors[idx % colors.length];
+                                    html += `<span class="user-custom-tag ${colorClass}">${tag}</span>`;
+                                });
+                                if (user.tags.length > 2) {
+                                    html += `<span class="user-custom-tag tag-more" title="${user.tags.slice(2).join(', ')}">+</span>`;
+                                }
+                                return html;
+                            })()}
+                        </div>
+                    </td>
+                    <td><span class="user-custom-tag ${user.status === '正常' ? 'tag-green' : user.status === '冻结' ? 'tag-blue' : 'tag-red'}">${user.status}</span></td>
+                    <td>
+                        <div class="info-cell">
+                            <div><span class="info-label">新增時間 :</span> ${user.date}</div>
+                            <div><span class="info-label">最後登錄 :</span> ${user.lastLogin}</div>
+                            <div><span class="info-label">離開天數 :</span> ${user.offlineDays}天</div>
+                            <div><span class="info-label">登錄IP :</span></div>
+                            <div class="ip-row" style="display: flex; align-items: center; gap: 4px;"><a href="#" class="ip-link" data-ip="${user.ip}" style="color: var(--primary-color); text-decoration: none;">${user.ip}</a> <i class="ph ph-copy copy-ip-btn" data-ip="${user.ip}" style="cursor: pointer; color: var(--text-muted);" title="複製IP"></i></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-cell">
+                            <div><span class="info-label">備註 :</span> ${user.remark}</div>
+                            <div><span class="info-label">回訪備註 :</span> ${user.followRemark}</div>
+                            <div><span class="info-label">注 :</span> ${user.note}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="operations-grid">
+                            <a href="#" class="op-link user-detail-link" data-uid="${user.uid}">編輯用戶</a>
+                            <a href="#" class="op-link user-detail-link" data-uid="${user.uid}">查看詳情</a>
+                            <a href="#" class="op-link">額度修改</a>
+                            <a href="#" class="op-link">資金明細</a>
+                            <a href="#" class="op-link">注單明細</a>
+                            <a href="#" class="op-link">修改密碼</a>
+                            <a href="#" class="op-link">下級會員</a>
+                            <a href="#" class="op-link">下級報表</a>
+                            <a href="#" class="op-link">下級注單</a>
+                            <button class="btn-more">更多...</button>
+                        </div>
+                    </td>
+                `;
+            } else {
+                // Compact Mode Layout
+                const pinned = [];
+                const unpinned = [];
+                
+                const visibleColumnsConfig = compactColumnsConfig.filter(col => compactColumnVisibility[col.id]);
+                visibleColumnsConfig.forEach(col => {
+                    if (pinnedColumnIds.includes(col.id)) pinned.push(col);
+                    else unpinned.push(col);
+                });
+
+                let cellsHtml = `<td class="sticky-col sticky-col-1" style="left:0;"><input type="checkbox" class="user-checkbox"></td>`;
+                
+                let currentLeft = 40;
+                pinned.forEach(col => {
+                    let cellStr = col.render(user);
+                    if (cellStr.includes('class="')) {
+                        cellStr = cellStr.replace('class="', `style="left:${currentLeft}px; min-width:110px;" class="sticky-col `);
+                    } else {
+                        cellStr = cellStr.replace('<td', `<td style="left:${currentLeft}px; min-width:110px;" class="sticky-col"`);
+                    }
+                    cellsHtml += cellStr;
+                    currentLeft += 110;
+                });
+
+                const unpinnedWithoutAction = unpinned.filter(col => col.id !== 'action');
+                unpinnedWithoutAction.forEach(col => {
+                    cellsHtml += col.render(user);
+                });
+
+                const actionCol = visibleColumnsConfig.find(col => col.id === 'action');
+                if (actionCol) {
+                    cellsHtml += actionCol.render(user);
+                }
+
+                tr.innerHTML = cellsHtml;
+            }
+
             userTableBody.appendChild(tr);
         });
+
+        // Bind Compact Mode Row Action Dropdown Events
+        userTableBody.querySelectorAll('.btn-op-more').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = btn.nextElementSibling;
+                const isShow = menu.classList.contains('show');
+                document.querySelectorAll('.op-dropdown-menu').forEach(m => m.classList.remove('show'));
+                if (!isShow) {
+                    menu.classList.add('show');
+                }
+            });
+        });
+
+        userTableBody.querySelectorAll('.op-dropdown-menu li').forEach(li => {
+            li.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const text = li.textContent.trim();
+                const tr = li.closest('tr');
+                // find user account/id if needed
+                const userCell = tr ? tr.querySelector('.user-detail-link') : null;
+                const uid = userCell ? userCell.getAttribute('data-uid') : null;
+                
+                if (text === '查看詳情' || text === '編輯用戶') {
+                    if (uid) openUserEditModal(uid);
+                } else {
+                    alert(`觸發操作：${text}`);
+                }
+                li.parentElement.classList.remove('show');
+            });
+        });
+        
+        // Bind Sort Events
+        if (userTableHeader) {
+            userTableHeader.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const col = btn.getAttribute('data-sort');
+                    if (currentSortColumn === col) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = col;
+                        currentSortDirection = 'desc';
+                    }
+                    renderTable();
+                });
+            });
+
+            // Bind Pin Events
+            userTableHeader.querySelectorAll('.icon-pin').forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = icon.getAttribute('data-id');
+                    if (pinnedColumnIds.includes(id)) {
+                        pinnedColumnIds = pinnedColumnIds.filter(colId => colId !== id);
+                    } else {
+                        pinnedColumnIds.push(id);
+                    }
+                    renderTable();
+                });
+            });
+        }
 
         // Apply column visibility
         applyColumnVisibility();
     }
 
+
     // Column Visibility State
     const columnVisibility = {
-        0: true, 1: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true
+        1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true
     };
 
     function applyColumnVisibility() {
+        if (currentTableMode === 'compact') {
+            const visibleCount = Object.values(compactColumnVisibility).filter(Boolean).length;
+            const visibleColumnsCountSpan = document.getElementById('visibleColumnsCount');
+            if (visibleColumnsCountSpan) {
+                visibleColumnsCountSpan.textContent = visibleCount;
+            }
+            return;
+        }
+
         Object.keys(columnVisibility).forEach(index => {
             const idx = parseInt(index, 10);
             const cells = document.querySelectorAll(`table tr th:nth-child(${idx + 1}), table tr td:nth-child(${idx + 1})`);
@@ -781,33 +1266,168 @@ document.addEventListener('DOMContentLoaded', () => {
     const columnList = document.getElementById('columnList');
     const resetColumns = document.getElementById('resetColumns');
 
-    // Toggle Dropdown
-    btnColumnToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = columnToggleDropdown.classList.contains('show');
-        closeAllDropdowns();
-        if (!isOpen) {
-            columnToggleDropdown.classList.add('show');
+    function renderDropdown() {
+        if (!columnList) return;
+        if (nestedDropdownHtml === '') nestedDropdownHtml = columnList.innerHTML;
+
+        if (currentTableMode === 'nested') {
+            columnList.innerHTML = nestedDropdownHtml;
+            columnList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const colIndex = parseInt(checkbox.getAttribute('data-column'), 10);
+                checkbox.checked = columnVisibility[colIndex];
+            });
+            const visibleCount = Object.values(columnVisibility).filter(Boolean).length;
+            const cnt = document.getElementById('visibleColumnsCount');
+            if(cnt) cnt.textContent = visibleCount;
+        } else {
+            let html = '';
+            let visibleCount = 0;
+            
+            const groupedConfig = {};
+            compactColumnsConfig.forEach(col => {
+                if (!groupedConfig[col.group]) groupedConfig[col.group] = [];
+                groupedConfig[col.group].push(col);
+            });
+            
+            for (const [groupName, cols] of Object.entries(groupedConfig)) {
+                const customizableCols = cols.filter(col => !['uid', 'account', 'action'].includes(col.id));
+                const allChecked = customizableCols.length > 0 && customizableCols.every(col => tempCompactColumnVisibility[col.id]);
+                const someChecked = customizableCols.some(col => tempCompactColumnVisibility[col.id]);
+                
+                let groupCbHtml = '';
+                if (customizableCols.length > 0) {
+                    groupCbHtml = `<input type="checkbox" class="group-cb" data-group="${groupName}" ${allChecked ? 'checked' : ''} style="margin-right:8px;">`;
+                }
+
+                html += `
+                    <div class="column-group-header" style="display:flex; align-items:center; justify-content:space-between; margin: 16px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid var(--border-color); font-weight: bold;">
+                        <label style="display:flex; align-items:center; ${customizableCols.length > 0 ? 'cursor:pointer;' : ''}">
+                            ${groupCbHtml}
+                            ${groupName}
+                        </label>
+                    </div>
+                `;
+                html += `<ul class="column-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+                cols.forEach(col => {
+                    const isVisible = tempCompactColumnVisibility[col.id];
+                    if (isVisible) visibleCount++;
+                    const isPinned = tempPinnedColumnIds.includes(col.id);
+                    
+                    let checkboxHtml = '';
+                    let labelSpanStyle = 'margin-left:8px; font-size:13px;';
+                    if (['uid', 'account', 'action'].includes(col.id)) {
+                        checkboxHtml = `<input type="checkbox" class="compact-col-cb" data-id="${col.id}" data-group="${groupName}" checked style="display:none;">`;
+                        labelSpanStyle = 'margin-left:0; font-size:13px; color: var(--text-secondary);';
+                    } else {
+                        checkboxHtml = `<input type="checkbox" class="compact-col-cb" data-id="${col.id}" data-group="${groupName}" ${isVisible ? 'checked' : ''}>`;
+                    }
+                    
+                    let pinHtml = '';
+                    if (col.id !== 'action') {
+                        pinHtml = `<i class="ph ph-push-pin icon-pin ${isPinned ? 'active' : ''}" data-id="${col.id}" title="釘選欄位"></i>`;
+                    }
+
+                    html += `
+                        <li>
+                            <div class="dropdown-item-flex" style="padding-left: 8px; width: 100%;">
+                                <label style="display:flex; align-items:center; flex-grow:1; margin-right:4px;">${checkboxHtml} <span style="${labelSpanStyle}">${col.label}</span></label>
+                                ${pinHtml}
+                            </div>
+                        </li>
+                    `;
+                });
+                html += `</ul>`;
+            }
+
+            const drawerContent = document.getElementById('columnsDrawerContent');
+            if (drawerContent) {
+                drawerContent.innerHTML = html;
+                // Set indeterminate states
+                drawerContent.querySelectorAll('.group-cb').forEach(groupCb => {
+                    const groupName = groupCb.getAttribute('data-group');
+                    const groupCols = groupedConfig[groupName];
+                    const customizableCols = groupCols.filter(col => !['uid', 'account', 'action'].includes(col.id));
+                    if (customizableCols.length > 0) {
+                        const allChecked = customizableCols.every(col => tempCompactColumnVisibility[col.id]);
+                        const someChecked = customizableCols.some(col => tempCompactColumnVisibility[col.id]);
+                        if (!allChecked && someChecked) {
+                            groupCb.indeterminate = true;
+                        }
+                    }
+                });
+            }
+        
+        }
+    }
+
+    // Toggle Dropdown (Nested / Compact Mode)
+    if (btnColumnToggle) {
+        btnColumnToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            
+            if (currentTableMode === 'compact') {
+                const columnsDrawer = document.getElementById('columnsDrawer');
+                if (columnsDrawer) {
+                    // Initialize temp draft state from saved state
+                    tempCompactColumnVisibility = { ...compactColumnVisibility };
+                    tempPinnedColumnIds = [ ...pinnedColumnIds ];
+                    renderDropdown(); // Ensure it renders into the drawer first
+                    columnsDrawer.classList.add('active');
+                    document.getElementById('overlay').classList.add('active');
+                }
+            } else {
+                const isOpen = columnToggleDropdown.classList.contains('show');
+                if (!isOpen) {
+                    renderDropdown();
+                    columnToggleDropdown.classList.add('show');
+                }
+            }
+        });
+    }
+
+    // Delegated Checkbox changed
+    columnList.addEventListener('change', (e) => {
+        if (e.target.type === 'checkbox') {
+            if (currentTableMode === 'nested') {
+                const colIndex = parseInt(e.target.getAttribute('data-column'), 10);
+                columnVisibility[colIndex] = e.target.checked;
+                applyColumnVisibility();
+            } else {
+                const colId = e.target.getAttribute('data-id');
+                compactColumnVisibility[colId] = e.target.checked;
+                renderTable();
+            }
+            renderDropdown(); // Update count
         }
     });
 
-    // Checkbox changed
-    columnList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', (e) => {
-            const colIndex = parseInt(e.target.getAttribute('data-column'), 10);
-            columnVisibility[colIndex] = e.target.checked;
-            applyColumnVisibility();
-        });
+    // Delegated Pin Click inside dropdown
+    columnList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('icon-pin')) {
+            e.stopPropagation();
+            const id = e.target.getAttribute('data-id');
+            if (pinnedColumnIds.includes(id)) {
+                pinnedColumnIds = pinnedColumnIds.filter(colId => colId !== id);
+            } else {
+                pinnedColumnIds.push(id);
+            }
+            renderDropdown(); // Update UI in dropdown
+            renderTable(); // Update table
+        }
     });
 
     // Reset Defaults
     const resetAction = () => {
-        columnList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.checked = true;
-            const colIndex = parseInt(checkbox.getAttribute('data-column'), 10);
-            columnVisibility[colIndex] = true;
-        });
-        applyColumnVisibility();
+        if (currentTableMode === 'nested') {
+            Object.keys(columnVisibility).forEach(k => columnVisibility[k] = true);
+            applyColumnVisibility();
+        } else {
+            compactColumnsConfig.forEach(col => compactColumnVisibility[col.id] = true);
+            pinnedColumnIds = [];
+            renderTable();
+        }
+        renderDropdown();
     };
     if (resetColumns) resetColumns.addEventListener('click', resetAction);
     const resetIcon = document.querySelector('.reset-icon');
@@ -828,11 +1448,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Select all logic
-    selectAllCheckbox.addEventListener('change', (e) => {
-        const checkboxes = document.querySelectorAll('.user-checkbox');
-        checkboxes.forEach(cb => cb.checked = e.target.checked);
-    });
+    // Select all logic via delegation
+    if (userTableHeader) {
+        userTableHeader.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox' && (e.target.id === 'selectAllCheckbox' || e.target.id === 'selectAllCheckboxCompact')) {
+                const checkboxes = document.querySelectorAll('.user-checkbox');
+                checkboxes.forEach(cb => cb.checked = e.target.checked);
+            }
+        });
+    }
 
     // Search events
     btnSearch.addEventListener('click', () => {
@@ -951,5 +1575,236 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // User Edit Modal Logic
+    const userEditModal = document.getElementById('userEditModal');
+    const btnUserEditClose = document.getElementById('btnUserEditClose');
+    const btnUserEditCancel = document.getElementById('btnUserEditCancel');
+    const btnUserEditSave = document.getElementById('btnUserEditSave');
+
+    function openUserEditModal(uid) {
+        if (!userEditModal) return;
+        const user = (mockUsers || []).find(u => u.uid === uid) || (mockUsers && mockUsers[0]);
+        if (!user) return;
+
+        const titleEl = document.getElementById('userEditModalTitle');
+        if (titleEl) titleEl.textContent = `編輯用戶詳情 - ${user.account}`;
+        
+        const accountEl = document.getElementById('editFormAccount');
+        if (accountEl) accountEl.textContent = user.account;
+        
+        const avatarEl = document.getElementById('modalUserAvatar');
+        if (avatarEl) avatarEl.textContent = user.account.charAt(0).toLowerCase();
+
+        // Radio selections
+        const userTypeRadios = document.querySelectorAll('input[name="editUserType"]');
+        userTypeRadios.forEach(r => r.checked = (r.value === user.userType));
+
+        const statusRadios = document.querySelectorAll('input[name="editStatus"]');
+        statusRadios.forEach(r => r.checked = (r.value === user.status));
+
+        // Inputs
+        const realNameIn = document.getElementById('editFormRealName');
+        if (realNameIn) realNameIn.value = user.realName !== '-' ? user.realName : '';
+
+        const nicknameIn = document.getElementById('editFormNickname');
+        if (nicknameIn) nicknameIn.value = user.nickname !== '-' ? user.nickname : '';
+
+        const phoneIn = document.getElementById('editFormPhone');
+        if (phoneIn) phoneIn.value = (user.phone !== '未驗證' && user.phone !== '末綁定') ? user.phone : '';
+
+        const payLevelSel = document.getElementById('editFormPayLevel');
+        if (payLevelSel) payLevelSel.value = user.payLevel || '默認層';
+
+        const levelSel = document.getElementById('editFormLevel');
+        if (levelSel) levelSel.value = user.level || '普通會員';
+
+        const remarkIn = document.getElementById('editFormRemark');
+        if (remarkIn) remarkIn.value = user.remark !== '-' ? user.remark : '';
+
+        userEditModal.classList.add('show');
+    }
+
+    // Delegated click listener for user links
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('.user-detail-link');
+        if (link) {
+            e.preventDefault();
+            const uid = link.getAttribute('data-uid');
+            openUserEditModal(uid);
+        }
+    });
+
+    if (btnUserEditClose) btnUserEditClose.addEventListener('click', () => userEditModal.classList.remove('show'));
+    if (btnUserEditCancel) btnUserEditCancel.addEventListener('click', () => userEditModal.classList.remove('show'));
+    if (btnUserEditSave) {
+        btnUserEditSave.addEventListener('click', () => {
+            alert('用戶詳情已更新！');
+            userEditModal.classList.remove('show');
+        });
+    }
+    if (userEditModal) {
+        userEditModal.addEventListener('click', (e) => {
+            if (e.target === userEditModal) {
+                userEditModal.classList.remove('show');
+            }
+        });
+    }
+
+// Toast Function
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    toast.style.color = '#fff';
+    toast.style.padding = '10px 20px';
+    toast.style.borderRadius = '4px';
+    toast.style.zIndex = '9999';
+    toast.style.fontSize = '14px';
+    toast.style.pointerEvents = 'none';
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+// IP Event Delegation
+document.querySelector('#userTableBody')?.addEventListener('click', function(e) {
+    if (e.target.closest('.ip-link')) {
+        e.preventDefault();
+        const ip = e.target.closest('.ip-link').dataset.ip;
+        showToast('前往 IP 統計頁面: ' + ip);
+    }
+    
+    if (e.target.closest('.copy-ip-btn')) {
+        const ip = e.target.closest('.copy-ip-btn').dataset.ip;
+        navigator.clipboard.writeText(ip).then(() => {
+            showToast('已複製 IP: ' + ip);
+        }).catch(err => {
+            showToast('複製失敗');
+        });
+    }
+    
+    // Refresh third party balance in compact mode
+    if (e.target.closest('.refresh-icon-compact')) {
+        const icon = e.target.closest('.refresh-icon-compact');
+        if (icon.classList.contains('icon-spin')) return; // Already refreshing
+        
+        icon.classList.add('icon-spin');
+        
+        // Simulate API call
+        setTimeout(() => {
+            icon.classList.remove('icon-spin');
+            showToast('三方餘額刷新成功');
+        }, 1000);
+    }
+});
+
+const drawerContent = document.getElementById('columnsDrawerContent');
+if (drawerContent) {
+    drawerContent.addEventListener('change', (e) => {
+        if (e.target.classList.contains('compact-col-cb')) {
+            const colId = e.target.getAttribute('data-id');
+            tempCompactColumnVisibility[colId] = e.target.checked;
+            renderDropdown(); // Update drawer UI only
+        } else if (e.target.classList.contains('group-cb')) {
+            const groupName = e.target.getAttribute('data-group');
+            const isChecked = e.target.checked;
+            compactColumnsConfig.forEach(col => {
+                if (col.group === groupName && !['uid', 'account', 'action'].includes(col.id)) {
+                    tempCompactColumnVisibility[col.id] = isChecked;
+                }
+            });
+            renderDropdown(); // Update drawer UI
+        }
+    });
+
+    drawerContent.addEventListener('click', (e) => {
+        const pinIcon = e.target.closest('.icon-pin');
+        if (pinIcon) {
+            e.stopPropagation();
+            const colId = pinIcon.getAttribute('data-id');
+            const idx = tempPinnedColumnIds.indexOf(colId);
+            if (idx > -1) {
+                tempPinnedColumnIds.splice(idx, 1);
+            } else {
+                tempPinnedColumnIds.push(colId);
+            }
+            renderDropdown(); // Update drawer UI only
+        }
+    });
+}
+
+// Drawer Save Button Handler
+document.getElementById('btnColumnsDrawerSave')?.addEventListener('click', () => {
+    compactColumnVisibility = { ...tempCompactColumnVisibility };
+    pinnedColumnIds = [ ...tempPinnedColumnIds ];
+    renderTable();
+    closeDrawer();
+});
+
+// Global Action Menu for Compact Mode
+let globalActionMenu = document.getElementById('globalCompactActionMenu');
+if (!globalActionMenu) {
+    globalActionMenu = document.createElement('div');
+    globalActionMenu.id = 'globalCompactActionMenu';
+    globalActionMenu.style.cssText = 'display:none;position:absolute;background:#fff;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(0,0,0,0.15);border-radius:6px;z-index:999999;padding:8px 0;min-width:160px;white-space:nowrap;max-height:300px;overflow-y:auto;text-align:left;';
+    
+    const compactActionItems = [
+        "编辑用户", "查看详情", "额度修改", "资金明细", "注单明细", "修改密码", "下级会员", "下级报表", "下级注单",
+        "---",
+        "交易设定", "赔率设置", "积分修改", "代理变更", "第三方游戏", "稽核记录", "代理变更记录", "回访备注",
+        "隐藏资金明细", "快速登录变更", "校验用户任务", "谷歌验证码", "链上地址", "额度修改(链上充值)", "编辑标签", "用户标签编辑记录"
+    ];
+    globalActionMenu.innerHTML = compactActionItems.map(item => {
+        if (item === '---') return `<div class="divider" style="height:1px;background-color:#e5e7eb;margin:4px 0;"></div>`;
+        return `<a href="#" style="display:block;padding:8px 16px;color:#374151;text-decoration:none;font-size:13px;text-align:center;" onmouseover="this.style.backgroundColor='#f3f4f6';this.style.color='#3b82f6'" onmouseout="this.style.backgroundColor='transparent';this.style.color='#374151'">${item}</a>`;
+    }).join('');
+    
+    document.body.appendChild(globalActionMenu);
+
+    let hideTimeout;
+    const hideMenu = () => {
+        hideTimeout = setTimeout(() => {
+            globalActionMenu.style.display = 'none';
+        }, 150);
+    };
+    const showMenu = (iconEl) => {
+        clearTimeout(hideTimeout);
+        const rect = iconEl.getBoundingClientRect();
+        globalActionMenu.style.display = 'block';
+        globalActionMenu.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+        globalActionMenu.style.left = (rect.right + window.scrollX - globalActionMenu.offsetWidth) + 'px';
+    };
+
+    document.addEventListener('mouseover', (e) => {
+        const icon = e.target.closest('.compact-action-icon');
+        if (icon) {
+            showMenu(icon);
+        } else if (e.target.closest('#globalCompactActionMenu')) {
+            clearTimeout(hideTimeout);
+        } else {
+            if (globalActionMenu.style.display === 'block') {
+                hideMenu();
+            }
+        }
+    });
+}
+
+// Sidebar Toggle Logic
+const btnSidebarToggle = document.getElementById('btnSidebarToggle');
+const mainLayout = document.querySelector('.main-layout');
+if (btnSidebarToggle && mainLayout) {
+    btnSidebarToggle.addEventListener('click', () => {
+        mainLayout.classList.toggle('sidebar-collapsed');
+    });
+}
 
 });

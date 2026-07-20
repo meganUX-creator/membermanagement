@@ -16,8 +16,9 @@
         <!-- 左側選單 (Sidebar) -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <i class="ph-fill ph-user-circle"></i>
-                <span>个人中心</span>
+                <i class="ph-fill ph-user-circle" id="sidebarHeaderIcon"></i>
+                <span id="sidebarHeaderTitle">个人中心</span>
+                <i class="ph ph-list" id="btnSidebarToggle" style="margin-left:auto; cursor:pointer; font-size:20px; color:var(--text-muted);" title="收起/展開選單"></i>
             </div>
             <nav class="sidebar-nav">
                 <!-- 用户管理 -->
@@ -195,9 +196,18 @@
                     <i class="ph-fill ph-check-circle text-primary"></i>
                     <span class="text-sm font-semibold text-secondary">常用固定維度 (基本篩選)</span>
                 </div>
-                <button class="btn btn-secondary btn-icon" id="btnCustomizeFilter" style="padding: 4px 10px; font-size: 13px; height: auto;">
-                    <i class="ph ph-faders"></i> 自訂篩選
-                </button>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <label class="toggle-switch-wrapper" id="labelTestAccount">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="filterTestAccountsToggle">
+                            <span class="slider"></span>
+                        </div>
+                        過濾測試賬號
+                    </label>
+                    <button class="btn btn-secondary btn-icon" id="btnCustomizeFilter" style="padding: 4px 10px; font-size: 13px; height: auto;">
+                        <i class="ph ph-faders"></i> 自訂篩選
+                    </button>
+                </div>
             </div>
 
             <div class="filter-row">
@@ -258,7 +268,6 @@
                         </div>
                         <ul class="select-options">
                             <li data-value="已充值玩家"><input type="checkbox"> <span>已充值玩家</span></li>
-                            <li data-value="过滤测试账号"><input type="checkbox"> <span>过滤测试账号</span></li>
                         </ul>
                     </div>
                 </div>
@@ -419,6 +428,32 @@
         </div>
 
         <!-- 列表區塊 -->
+        <!-- 顯示模式切換區塊 (Mode Switch Bar) -->
+        <div class="mode-switcher-card">
+            <div class="mode-switcher-bar">
+                <div class="mode-left">
+                    <span class="mode-title">顯示模式 :</span>
+                    <div class="mode-segmented-control">
+                        <button type="button" class="mode-btn active" id="btnModeNested" data-mode="nested">
+                            <i class="ph ph-squares-four"></i> 巢狀模式
+                        </button>
+                        <button type="button" class="mode-btn" id="btnModeCompact" data-mode="compact">
+                            <i class="ph ph-rows"></i> 壓縮模式
+                        </button>
+                    </div>
+                </div>
+                <div class="mode-right" id="modeDescriptionText">
+                    巢狀結構：分組整合屬性，減少表格欄位寬度
+                </div>
+            </div>
+
+            <!-- 提示 Banner -->
+            <div class="table-mode-notice" id="modeNoticeBanner">
+                <i class="ph ph-info"></i>
+                <span id="modeNoticeText"><strong>巢狀模式</strong>：將欄位屬性垂直分組組合，畫面精簡展示。點擊切換為壓縮模式可展開所有獨立列進行橫向比對。</span>
+            </div>
+        </div>
+
         <section class="table-card">
             <div class="table-header-toolbar">
                 <div class="table-title">
@@ -464,8 +499,8 @@
                                 <input type="text" id="columnSearchInput" placeholder="Search columns">
                             </div>
                             <ul class="column-list" id="columnList">
-                                <li><label><input type="checkbox" data-column="0" checked> <span>在線</span></label></li>
-                                <li><label><input type="checkbox" data-column="1" checked> <span>頭像</span></label></li>
+                                <li><label><input type="checkbox" data-column="1" checked> <span>在線</span></label></li>
+                                <li><label><input type="checkbox" data-column="2" checked> <span>頭像</span></label></li>
                                 <li><label><input type="checkbox" data-column="3" checked> <span>會員信息</span></label>
                                 </li>
                                 <li><label><input type="checkbox" data-column="4" checked> <span>等級&團隊</span></label>
@@ -489,8 +524,8 @@
             </div>
 
             <div class="table-wrapper">
-                <table>
-                    <thead>
+                <table id="userTable">
+                    <thead id="userTableHeader">
                         <tr>
                             <th>在線</th>
                             <th>頭像</th>
@@ -515,22 +550,23 @@
             <!-- 分頁區塊 -->
             <div class="pagination-container">
                 <div class="pagination-info">
-                    共 <span id="totalCount">8</span> 條
+                    共 <span id="totalCount">0</span> 條
                 </div>
                 <div class="pagination-size-wrapper">
                     <select id="selectPageSize" class="page-size-select">
                         <option value="10">10 條/頁</option>
-                        <option value="20">20 條/頁</option>
+                        <option value="20" selected>20 條/頁</option>
                         <option value="50">50 條/頁</option>
+                        <option value="100">100 條/頁</option>
                     </select>
                 </div>
-                <div class="pagination-pages">
-                    <button class="btn-page" disabled><i class="ph ph-caret-left"></i></button>
-                    <button class="btn-page active">1</button>
-                    <button class="btn-page" disabled><i class="ph ph-caret-right"></i></button>
+                <div class="pagination-pages" id="paginationPagesContainer">
+                    <button class="btn-page" id="btnPrevPage" disabled><i class="ph ph-caret-left"></i></button>
+                    <div id="pageNumbersList" style="display: flex; gap: 6px;"></div>
+                    <button class="btn-page" id="btnNextPage" disabled><i class="ph ph-caret-right"></i></button>
                 </div>
                 <div class="pagination-jump">
-                    前往 <input type="number" min="1" max="1" value="1"> 頁
+                    前往 <input type="number" id="inputJumpPage" min="1" max="1" value="1"> 頁
                 </div>
             </div>
         </section>
@@ -681,7 +717,222 @@
         </div>
     </div>
 
+    <!-- 編輯用戶詳情彈窗 (Edit User Details Modal) -->
+    <div class="modal-overlay" id="userEditModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="userEditModalTitle">編輯用戶詳情</h3>
+                <button class="btn-icon btn-close-modal" id="btnUserEditClose">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="modal-body user-edit-form-body">
+                <form id="userEditForm" class="user-edit-form">
+                    <!-- 頭像 -->
+                    <div class="form-row">
+                        <label class="form-label">頭像 :</label>
+                        <div class="form-control-wrap avatar-upload-wrap">
+                            <div class="user-modal-avatar" id="modalUserAvatar">m</div>
+                            <button type="button" class="btn btn-outline btn-sm">更換頭像</button>
+                        </div>
+                    </div>
+                    <!-- 账号 -->
+                    <div class="form-row">
+                        <label class="form-label">账号 :</label>
+                        <div class="form-control-wrap">
+                            <span class="form-static-text" id="editFormAccount">-</span>
+                        </div>
+                    </div>
+                    <!-- 会员类型 -->
+                    <div class="form-row">
+                        <label class="form-label">会员类型 :</label>
+                        <div class="form-control-wrap radio-group">
+                            <label><input type="radio" name="editUserType" value="代理會員" checked> 代理會員</label>
+                            <label><input type="radio" name="editUserType" value="普通會員"> 普通會員</label>
+                        </div>
+                    </div>
+                    <!-- 状态 -->
+                    <div class="form-row">
+                        <label class="form-label">狀態 :</label>
+                        <div class="form-control-wrap radio-group">
+                            <label><input type="radio" name="editStatus" value="正常" checked> 正常</label>
+                            <label><input type="radio" name="editStatus" value="冻结"> 冻结</label>
+                            <label><input type="radio" name="editStatus" value="停用"> 停用</label>
+                        </div>
+                    </div>
+                    <!-- 真实姓名 -->
+                    <div class="form-row">
+                        <label class="form-label">真实姓名 :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormRealName" class="form-input">
+                        </div>
+                    </div>
+                    <!-- 用户昵称 -->
+                    <div class="form-row">
+                        <label class="form-label">用户昵称 :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormNickname" class="form-input">
+                        </div>
+                    </div>
+                    <!-- 出生年月日 -->
+                    <div class="form-row">
+                        <label class="form-label">出生年月日 :</label>
+                        <div class="form-control-wrap">
+                            <input type="date" id="editFormBirthday" class="form-input">
+                        </div>
+                    </div>
+                    <!-- 支付层级 -->
+                    <div class="form-row">
+                        <label class="form-label">支付层级 :</label>
+                        <div class="form-control-wrap">
+                            <select id="editFormPayLevel" class="form-select">
+                                <option value="默認層">默認層</option>
+                                <option value="VIP層">VIP層</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 用户等级 -->
+                    <div class="form-row">
+                        <label class="form-label">用户等级 :</label>
+                        <div class="form-control-wrap">
+                            <select id="editFormLevel" class="form-select">
+                                <option value="普通會員">普通會員</option>
+                                <option value="黃金會員">黃金會員</option>
+                                <option value="VIP會員">VIP會員</option>
+                                <option value="鑽石會員">鑽石會員</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 国家 -->
+                    <div class="form-row">
+                        <label class="form-label">国家 :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormCountry" class="form-input" value="VN">
+                        </div>
+                    </div>
+                    <!-- 币种 -->
+                    <div class="form-row">
+                        <label class="form-label">币种 :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormCurrency" class="form-input" value="VND">
+                        </div>
+                    </div>
+                    <!-- 电话 -->
+                    <div class="form-row">
+                        <label class="form-label">电话 :</label>
+                        <div class="form-control-wrap input-with-btn">
+                            <input type="text" id="editFormPhone" class="form-input">
+                            <button type="button" class="btn btn-primary btn-sm">校验</button>
+                        </div>
+                    </div>
+                    <!-- email -->
+                    <div class="form-row">
+                        <label class="form-label">email :</label>
+                        <div class="form-control-wrap">
+                            <input type="email" id="editFormEmail" class="form-input">
+                        </div>
+                    </div>
+                    <!-- QQ -->
+                    <div class="form-row">
+                        <label class="form-label">QQ :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormQQ" class="form-input">
+                        </div>
+                    </div>
+                    <!-- 微信 -->
+                    <div class="form-row">
+                        <label class="form-label">微信 :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormWechat" class="form-input">
+                        </div>
+                    </div>
+                    <!-- zalo -->
+                    <div class="form-row">
+                        <label class="form-label">zalo :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormZalo" class="form-input">
+                        </div>
+                    </div>
+                    <!-- whatsapp -->
+                    <div class="form-row">
+                        <label class="form-label">whatsapp :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormWhatsapp" class="form-input">
+                        </div>
+                    </div>
+                    <!-- telegram -->
+                    <div class="form-row">
+                        <label class="form-label">telegram :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormTelegram" class="form-input">
+                        </div>
+                    </div>
+                    <!-- facebook -->
+                    <div class="form-row">
+                        <label class="form-label">facebook :</label>
+                        <div class="form-control-wrap">
+                            <input type="text" id="editFormFacebook" class="form-input">
+                        </div>
+                    </div>
+                    <!-- 第三方登录渠道 -->
+                    <div class="form-row">
+                        <label class="form-label">FACEBOOK 第三方登录渠道 :</label>
+                        <div class="form-control-wrap">
+                            <span class="tag-badge-grey">尚未绑定</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">GOOGLE 第三方登录渠道 :</label>
+                        <div class="form-control-wrap">
+                            <span class="tag-badge-grey">尚未绑定</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">TELEGRAM 第三方登录渠道 :</label>
+                        <div class="form-control-wrap">
+                            <span class="tag-badge-grey">尚未绑定</span>
+                        </div>
+                    </div>
+                    <!-- 提现费率 -->
+                    <div class="form-row">
+                        <label class="form-label">提现费率 :</label>
+                        <div class="form-control-wrap input-with-note">
+                            <input type="text" id="editFormWithdrawFee" class="form-input" style="max-width:240px;">
+                            <span class="form-note-text text-danger" style="margin-left:8px;font-size:13px;">支持三位小数</span>
+                        </div>
+                    </div>
+                    <!-- 备注 -->
+                    <div class="form-row">
+                        <label class="form-label">备注 :</label>
+                        <div class="form-control-wrap">
+                            <textarea id="editFormRemark" class="form-textarea" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btnUserEditCancel">取消</button>
+                <button class="btn btn-primary" id="btnUserEditSave">保存修改</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+
+    <!-- Custom Columns Drawer (Compact Mode) -->
+    <div class="advanced-filter-drawer" id="columnsDrawer">
+        <div class="drawer-header">
+            <h3>自訂欄位</h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-outline btn-sm" id="btnColumnsDrawerClose">關閉</button>
+                <button class="btn btn-primary btn-sm" id="btnColumnsDrawerSave">保存</button>
+            </div>
+        </div>
+        <div class="drawer-content" id="columnsDrawerContent">
+            <!-- Rendered via JS -->
+        </div>
+    </div>
+
 </body>
 
 </html>
