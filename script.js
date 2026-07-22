@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+
+
+
     // Drawer Elements
     const openBtn = document.getElementById('openAdvancedFilter');
     const closeBtn = document.getElementById('closeAdvancedFilter');
@@ -21,41 +25,45 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentAccountType = 'exact'; // Default type: exact
 
     // Toggle Account Type Dropdown
-    accountTypeSelected.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeAllDropdowns();
-        accountTypeMenu.classList.toggle('show');
-    });
-
-    // Handle account type selection
-    accountTypeMenu.querySelectorAll('li').forEach(item => {
-        item.addEventListener('click', (e) => {
-            accountTypeMenu.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-            item.classList.add('active');
-            
-            const value = item.getAttribute('data-value');
-            currentAccountType = value;
-            
-            const selectedText = item.querySelector('span').textContent;
-            accountTypeText.textContent = selectedText;
-
-            // Change placeholder and clear value
-            if (value === 'exact') {
-                inputAccount.placeholder = '請輸入精確帳號';
-            } else if (value === 'fuzzy') {
-                inputAccount.placeholder = '請輸入模糊帳號關鍵字';
-            } else if (value === 'multi') {
-                inputAccount.placeholder = "帐号以';'隔开，上限限制 50 个帐号";
-            } else {
-                inputAccount.placeholder = `請輸入${selectedText}`;
-            }
-            inputAccount.value = '';
-            
-            accountTypeMenu.classList.remove('show');
-            updateFilters();
-            renderTable();
+    if (accountTypeSelected && accountTypeMenu) {
+        accountTypeSelected.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            accountTypeMenu.classList.toggle('show');
         });
-    });
+
+        // Handle account type selection
+        accountTypeMenu.querySelectorAll('li').forEach(item => {
+            item.addEventListener('click', (e) => {
+                accountTypeMenu.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                item.classList.add('active');
+                
+                const value = item.getAttribute('data-value');
+                currentAccountType = value;
+                
+                const selectedText = item.querySelector('span').textContent;
+                if (accountTypeText) accountTypeText.textContent = selectedText;
+
+                // Change placeholder and clear value
+                if (inputAccount) {
+                    if (value === 'exact') {
+                        inputAccount.placeholder = '請輸入精確帳號';
+                    } else if (value === 'fuzzy') {
+                        inputAccount.placeholder = '請輸入模糊帳號關鍵字';
+                    } else if (value === 'multi') {
+                        inputAccount.placeholder = "帐号以';'隔开，上限限制 50 个帐号";
+                    } else {
+                        inputAccount.placeholder = `請輸入${selectedText}`;
+                    }
+                    inputAccount.value = '';
+                }
+                
+                accountTypeMenu.classList.remove('show');
+                updateFilters();
+                renderTable();
+            });
+        });
+    }
 
     // Toggle for Filter Test Accounts
     const filterTestAccountsToggle = document.getElementById('filterTestAccountsToggle');
@@ -69,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper: Close all dropdown menus
     function closeAllDropdowns() {
         document.querySelectorAll('.select-options').forEach(el => el.classList.remove('show'));
-        accountTypeMenu.classList.remove('show');
+        if (accountTypeMenu) accountTypeMenu.classList.remove('show');
         const colToggle = document.getElementById('columnToggleDropdown');
         if (colToggle) colToggle.classList.remove('show');
         const batchMenu = document.getElementById('batchOperationsMenu');
@@ -224,7 +232,21 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (selectedItems.length === 1) {
                 selectedValSpan.textContent = selectedItems[0];
             } else {
-                selectedValSpan.textContent = `${selectedItems[0]} + ${selectedItems.length - 1}`;
+                let displayText = selectedItems[0];
+                let shownCount = 1;
+                for (let i = 1; i < selectedItems.length; i++) {
+                    if ((displayText + "、" + selectedItems[i]).length > 10) {
+                        break;
+                    }
+                    displayText += "、" + selectedItems[i];
+                    shownCount++;
+                }
+                
+                if (shownCount < selectedItems.length) {
+                    selectedValSpan.textContent = `${displayText} + ${selectedItems.length - shownCount}`;
+                } else {
+                    selectedValSpan.textContent = displayText;
+                }
             }
         }
         
@@ -244,19 +266,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    initSingleSelect(dropdownStatus, (val) => {
-        selectedStatusVal = val;
-    });
+    if (typeof dropdownStatus !== 'undefined' && dropdownStatus) {
+        initSingleSelect(dropdownStatus, (val) => {
+            selectedStatusVal = val;
+        });
+    }
 
-    initSingleSelect(dropdownLevel, (val) => {
-        selectedLevelVal = val;
-    });
+    if (typeof dropdownLevel !== 'undefined' && dropdownLevel) {
+        initSingleSelect(dropdownLevel, (val) => {
+            selectedLevelVal = val;
+        });
+    }
 
-    initMultiSelect(dropdownVip, () => {
-    });
+    if (typeof dropdownVip !== 'undefined' && dropdownVip) {
+        initMultiSelect(dropdownVip, () => {
+        });
+    }
 
-    initMultiSelect(dropdownOther, () => {
-    });
+    if (typeof dropdownOther !== 'undefined' && dropdownOther) {
+        initMultiSelect(dropdownOther, () => {
+        });
+    }
 
     // Advanced Filter Controls
     const selectBirthday = document.getElementById('selectBirthday');
@@ -298,12 +328,14 @@ document.addEventListener('DOMContentLoaded', () => {
         drawer.classList.remove('active');
         const columnsDrawer = document.getElementById('columnsDrawer');
         if (columnsDrawer) columnsDrawer.classList.remove('active');
+        const userEditDrawer = document.getElementById('userEditDrawer');
+        if (userEditDrawer) userEditDrawer.classList.remove('active');
         overlay.classList.remove('active');
     }
 
-    openBtn.addEventListener('click', openDrawer);
-    closeBtn.addEventListener('click', closeDrawer);
-    overlay.addEventListener('click', closeDrawer);
+    if (openBtn) openBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (overlay) overlay.addEventListener('click', closeDrawer);
     document.getElementById('btnColumnsDrawerClose')?.addEventListener('click', closeDrawer);
 
     // Table Mode & Pagination States
@@ -319,6 +351,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let pinnedColumnIds = [];
     let tempPinnedColumnIds = [];
     
+    // Nested Visibility State
+    const nestedColumnsConfig = [
+        { id: 'online', label: '在線' },
+        { id: 'avatar', label: '頭像' },
+        { id: 'memberInfo', label: '會員信息' },
+        { id: 'levelTeam', label: '等級&團隊' },
+        { id: 'creditLimit', label: '信用&額度' },
+        { id: 'depositWithdraw', label: '存取款' },
+        { id: 'tags', label: '標籤' },
+        { id: 'status', label: '狀態' },
+        { id: 'dateInfo', label: '日期信息' },
+        { id: 'remark', label: '備註' }
+    ];
+    let nestedColumnVisibility = {};
+    let tempNestedColumnVisibility = {};
+    let nestedPinnedColumnIds = [];
+    let tempNestedPinnedColumnIds = [];
+    nestedColumnsConfig.forEach(col => { nestedColumnVisibility[col.id] = true; });
+
     // Compact Visibility State
     let compactColumnVisibility = {};
     let tempCompactColumnVisibility = {};
@@ -398,16 +449,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function setTableMode(mode) {
         currentTableMode = mode;
         if (mode === 'nested') {
-            btnModeNested.classList.add('active');
-            btnModeCompact.classList.remove('active');
-            modeDescriptionText.textContent = '巢狀結構：分組整合屬性，減少表格欄位寬度';
-            modeNoticeText.innerHTML = '<strong>巢狀模式</strong>：將欄位屬性垂直分組組合，畫面精簡展示。點擊切換為壓縮模式可展開所有獨立列進行橫向比對。';
+            if (btnModeNested) btnModeNested.classList.add('active');
+            if (btnModeCompact) btnModeCompact.classList.remove('active');
+            if (modeDescriptionText) modeDescriptionText.textContent = '巢狀結構：分組整合屬性，減少表格欄位寬度';
+            if (modeNoticeText) modeNoticeText.innerHTML = '<strong>巢狀模式</strong>：將欄位屬性垂直分組組合，畫面精簡展示。點擊切換為壓縮模式可展開所有獨立列進行橫向比對。';
             if (userTable) userTable.classList.remove('compact-mode-table');
         } else {
-            btnModeCompact.classList.add('active');
-            btnModeNested.classList.remove('active');
-            modeDescriptionText.textContent = '壓縮結構：扁平化所有屬性，適合橫向數據比對';
-            modeNoticeText.innerHTML = '<strong>壓縮模式</strong>：所有欄位變成獨立的列，標題只出現在最上方一次，數據按行排列，方便橫向比對，類似 Excel 的視圖。';
+            if (btnModeCompact) btnModeCompact.classList.add('active');
+            if (btnModeNested) btnModeNested.classList.remove('active');
+            if (modeDescriptionText) modeDescriptionText.textContent = '壓縮結構：扁平化所有屬性，適合橫向數據比對';
+            if (modeNoticeText) modeNoticeText.innerHTML = '<strong>壓縮模式</strong>：所有欄位變成獨立的列，標題只出現在最上方一次，數據按行排列，方便橫向比對，類似 Excel 的視圖。';
             if (userTable) userTable.classList.add('compact-mode-table');
         }
         currentPage = 1;
@@ -487,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 uid: newUid,
                 account: newAccount,
                 offlineDays: (user.offlineDays + i) % 15,
-                other: index % 2 === 0 ? "已充值玩家" : "过滤测试账号",
+                other: index % 2 === 0 ? "已充值玩家" : "測試帳號",
                 vip: index % 3 === 0 ? "钻石会员" : index % 3 === 1 ? "黄金会员" : "白银会员",
                 level: index % 3 === 0 ? "VIP會員" : index % 3 === 1 ? "黃金會員" : "普通會員"
             });
@@ -496,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper: Get active selections from multi-select
     function getMultiSelectValues(element) {
+        if (!element) return [];
         const values = [];
         element.querySelectorAll('.select-options li.selected').forEach(li => {
             values.push(li.getAttribute('data-value'));
@@ -533,6 +585,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Read form values and update Tags & Badge count
     function updateFilters() {
+        const tagsContainer = document.getElementById('filterTagsContainer');
+        const inputAccount = document.getElementById('inputAccount');
+        
+        if (!tagsContainer || !inputAccount) return;
+        
         const tags = [];
         let advancedCount = 0;
 
@@ -721,8 +778,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTable();
     }
 
-    btnClearAll.addEventListener('click', clearAllFilters);
-    btnClearDrawer.addEventListener('click', () => {
+    if (btnClearAll) btnClearAll.addEventListener('click', clearAllFilters);
+    if (btnClearDrawer) btnClearDrawer.addEventListener('click', () => {
         // Only clear advanced fields
         selectBirthday.value = '';
         inputDateStart.value = '';
@@ -900,22 +957,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Table Headers according to Table Mode
         if (userTableHeader) {
             if (currentTableMode === 'nested') {
-                userTableHeader.innerHTML = `
-                    <tr>
-                        <th width="40"><input type="checkbox" id="selectAllCheckbox"></th>
-                        <th>在線</th>
-                        <th>頭像</th>
-                        <th>會員信息</th>
-                        <th>等級&團隊</th>
-                        <th>信用&額度</th>
-                        <th>存取款</th>
-                        <th>標籤</th>
-                        <th>狀態</th>
-                        <th>日期信息</th>
-                        <th>備註</th>
-                        <th style="min-width: 260px;">操作</th>
-                    </tr>
-                `;
+                let nestedHeaderHtml = `<th width="40" style="text-align: center;"><input type="checkbox" id="selectAllCheckbox"></th>`;
+                nestedColumnsConfig.forEach(col => {
+                    if (nestedColumnVisibility[col.id]) {
+                        nestedHeaderHtml += `<th>${col.label}</th>`;
+                    }
+                });
+                nestedHeaderHtml += `<th style="text-align: center; width: 190px;">
+                    <button type="button" class="btn-custom-columns-header btn-header-columns-toggle" title="自訂欄位">
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                            <rect x="3" y="3" width="4" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                            <rect x="9" y="3" width="4" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                </th>`;
+                userTableHeader.innerHTML = `<tr class="header-group-row">${nestedHeaderHtml}</tr>`;
             } else {
                 // Compact Mode: 2-tier Headers with dynamic groups and pinning
                 const pinned = [];
@@ -950,13 +1006,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentLeft += 110;
                 });
 
-                // Action header (fixed on the right)
+                // Action header (fixed on the right) with Image 2 Icon
                 const actionCol = visibleColumnsConfig.find(col => col.id === 'action');
                 let actionHeaderHtml = '';
                 if (actionCol) {
                     actionHeaderHtml = `<th class="header-group sticky-col-right" rowspan="2" data-col="action" style="min-width: 60px; z-index:12;">
                         <div style="display:flex;align-items:center;white-space:nowrap;justify-content:center;">
-                            <span>${actionCol.label}</span>
+                            <button type="button" class="btn-custom-columns-header btn-header-columns-toggle" title="自訂欄位">
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                    <rect x="3" y="3" width="4" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                                    <rect x="9" y="3" width="4" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
                         </div>
                     </th>`;
                 }
@@ -1006,7 +1067,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Table Body
         userTableBody.innerHTML = '';
         if (pagedUsers.length === 0) {
-            const colspan = currentTableMode === 'nested' ? 12 : 43;
+            const visibleNestedCount = Object.values(nestedColumnVisibility).filter(Boolean).length;
+            const colspan = currentTableMode === 'nested' ? (visibleNestedCount + 2) : 43;
             userTableBody.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: var(--text-muted); padding: 32px 0;">無符合篩選條件的會員資料</td></tr>`;
             return;
         }
@@ -1015,111 +1077,115 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
 
             if (currentTableMode === 'nested') {
-                // Nested Mode Layout (Grouped Cells)
-                tr.innerHTML = `
-                    <td><input type="checkbox" class="user-checkbox"></td>
-                    <td><span class="badge-online ${user.offlineDays === 0 ? 'online' : 'offline'}">${user.offlineDays === 0 ? '在線' : '離線'}</span></td>
-                    <td>
-                        <div class="avatar-cell">
+                // Nested Mode Layout
+                let nestedRowHtml = `<td style="text-align: center;"><input type="checkbox" class="user-checkbox"></td>`;
+
+                if (nestedColumnVisibility['online']) {
+                    nestedRowHtml += `<td style="text-align: center;">
+                        <span class="user-custom-tag ${user.offlineDays === 0 ? 'tag-yellow' : 'tag-grey'}">${user.offlineDays === 0 ? '在線' : '離線'}</span>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['avatar']) {
+                    nestedRowHtml += `<td style="text-align: center;">
+                        <div class="user-avatar-circle-grey">
                             <i class="ph-fill ph-user"></i>
                         </div>
-                    </td>
-                    <td>
-                        <div class="info-cell">
-                            <div><span class="info-label">用戶ID :</span> ${user.uid}</div>
-                            <div><span class="info-label">會員名 :</span> <a href="#" class="user-detail-link" data-uid="${user.uid}">${user.account}</a></div>
-                            <div><span class="info-label">真實姓名 :</span> ${user.realName}</div>
-                            <div><span class="info-label">用戶暱稱 :</span> ${user.nickname}</div>
-                            <div><span class="info-label">代理 :</span> ${user.agentId}</div>
-                            <div><span class="info-label">邀請人 :</span> ${user.inviter}</div>
-                            <div><span class="info-label">註冊模式 :</span> ${user.registerMode}</div>
-                            <div><span class="info-label">手機號 :</span> ${user.phone}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="info-cell">
-                            <div><span class="info-label">支付層級 :</span> ${user.payLevel}</div>
-                            <div><span class="info-label">成長值 :</span> ${user.growth}</div>
-                            <div><span class="info-label">等級 :</span> ${user.level}</div>
-                            <div><span class="info-label">帳號類型 :</span> ${user.accountType}</div>
-                            <div><span class="info-label">會員類型 :</span> ${user.userType}</div>
-                            <div><span class="info-label">邀請碼 :</span> ${user.inviteCode}</div>
-                            <div><span class="info-label">直屬下級/團隊人數 :</span> ${user.directTeam}</div>
-                            <div><span class="info-label">VIP會員等級 :</span> ${user.vipLevel}</div>
-                            <div><span class="info-label">VIP成長值 :</span> ${user.vipGrowth}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="info-cell">
-                            <div><span class="info-label">信用值 :</span> ${user.creditValue}</div>
-                            <div><span class="info-label">可用額度 :</span> ${user.availableCredit}</div>
-                            <div><span class="info-label">佣金餘額 :</span> ${user.commissionBal}</div>
-                            <div><span class="info-label">餘額寶 :</span> ${user.balanceBuy}</div>
-                            <div><span class="info-label">欠款 :</span> ${user.arrears}</div>
-                            <div><span class="info-label">餘額寶利息 :</span> ${user.interest}</div>
-                            <div><span class="info-label">三方餘額 :</span> ${user.thirdBal} <a href="#" class="refresh-link">刷新</a></div>
-                            <div><span class="info-label">會員積分 :</span> ${user.points}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="info-cell">
-                            <div><span class="info-label">存款總額 :</span> ${user.deposit}</div>
-                            <div><span class="info-label">取款總額 :</span> ${user.withdraw}</div>
-                            <div><span class="info-label">提款預扣金額 :</span> ${user.withdrawPre}</div>
-                            <div><span class="info-label">后台扣款總額 :</span> ${user.adminDeduct}</div>
-                            <div><span class="info-label">存款次數 :</span> ${user.depositCount}</div>
-                            <div><span class="info-label">取款次數 :</span> ${user.withdrawCount}</div>
-                        </div>
-                    </td>
-                    <td>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['memberInfo']) {
+                    nestedRowHtml += `<td class="nested-cell-info">
+                        <div><span class="info-label">用戶ID :</span> ${user.uid}</div>
+                        <div><span class="info-label">會員名 :</span> <a href="#" class="user-detail-link" data-uid="${user.uid}">${user.account}</a></div>
+                        <div><span class="info-label">真實姓名 :</span> ${user.realName || '-'}</div>
+                        <div><span class="info-label">用戶暱稱 :</span> ${user.nickname || '-'}</div>
+                        <div><span class="info-label">代理 :</span> ${user.agentId || '-'}</div>
+                        <div><span class="info-label">邀請人 :</span> ${user.inviter || '-'}</div>
+                        <div><span class="info-label">註冊模式 :</span> ${user.registerMode || '一般註冊'}</div>
+                        <div><span class="info-label">手機號 :</span> ${user.phone}</div>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['levelTeam']) {
+                    nestedRowHtml += `<td class="nested-cell-info">
+                        <div><span class="info-label">支付層級 :</span> ${user.payLevel || '默認層'}</div>
+                        <div><span class="info-label">成長值 :</span> ${user.growth || 0}</div>
+                        <div><span class="info-label">等級 :</span> <strong class="${user.level === '黃金會員' ? 'level-gold' : ''}">${user.level}</strong></div>
+                        <div><span class="info-label">帳號類型 :</span> ${user.accountType || '普通帳號'}</div>
+                        <div><span class="info-label">會員類型 :</span> ${user.userType || '代理會員'}</div>
+                        <div><span class="info-label">邀請碼 :</span> ${user.inviteCode || '-'}</div>
+                        <div><span class="info-label">直屬下級/團隊人數 :</span> ${user.directTeam || '0/0'}</div>
+                        <div><span class="info-label">VIP會員等級 :</span> ${user.vipLevel || 0}</div>
+                        <div><span class="info-label">VIP成長值 :</span> ${user.vipGrowth || 0}</div>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['creditLimit']) {
+                    nestedRowHtml += `<td class="nested-cell-info">
+                        <div><span class="info-label">信用值 :</span> ${user.creditValue || 0}</div>
+                        <div><span class="info-label">可用額度 :</span> ${user.availableCredit || 0}</div>
+                        <div><span class="info-label">佣金餘額 :</span> ${user.commissionBal || 0}</div>
+                        <div><span class="info-label">診額寶 :</span> ${user.balanceBuy || 0}</div>
+                        <div><span class="info-label">欠款 :</span> ${user.arrears || '-'}</div>
+                        <div><span class="info-label">餘額寶利息 :</span> ${user.interest || 0}</div>
+                        <div><span class="info-label">三方餘額 :</span> ${user.thirdBal || 0} <a href="#" class="refresh-link" style="color:#2563eb;font-size:12px;margin-left:4px;text-decoration:none;">刷新</a></div>
+                        <div><span class="info-label">會員積分 :</span> ${user.points || 0}</div>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['depositWithdraw']) {
+                    nestedRowHtml += `<td class="nested-cell-info">
+                        <div><span class="info-label">存款總額 :</span> ${user.deposit || 0}</div>
+                        <div><span class="info-label">取款總額 :</span> ${user.withdraw || 0}</div>
+                        <div><span class="info-label">提款預扣金額 :</span> ${user.withdrawPre || '-'}</div>
+                        <div><span class="info-label">后台扣款總額 :</span> ${user.adminDeduct || '-'}</div>
+                        <div><span class="info-label">存款次數 :</span> ${user.depositCount || 0}</div>
+                        <div><span class="info-label">取款次數 :</span> ${user.withdrawCount || 0}</div>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['tags']) {
+                    nestedRowHtml += `<td>
                         <div class="user-tags-container">
-                            ${(function() {
-                                if (!user.tags || user.tags.length === 0) return '';
-                                const colors = ['tag-blue', 'tag-green', 'tag-red', 'tag-yellow', 'tag-purple'];
-                                let html = '';
-                                user.tags.slice(0, 2).forEach((tag, idx) => {
-                                    const colorClass = colors[idx % colors.length];
-                                    html += `<span class="user-custom-tag ${colorClass}">${tag}</span>`;
-                                });
-                                if (user.tags.length > 2) {
-                                    html += `<span class="user-custom-tag tag-more" title="${user.tags.slice(2).join(', ')}">+</span>`;
-                                }
-                                return html;
-                            })()}
+                            ${user.other === '已充值玩家' ? '<span class="user-custom-tag tag-blue">VIP</span> <span class="user-custom-tag tag-green">已充值玩家</span>' : (user.status === '正常' ? '<span class="user-custom-tag tag-blue">VIP</span> <span class="user-custom-tag tag-green">活躍</span>' : '<span class="user-custom-tag tag-blue">正常</span>')}
                         </div>
-                    </td>
-                    <td><span class="user-custom-tag ${user.status === '正常' ? 'tag-green' : user.status === '冻结' ? 'tag-blue' : 'tag-red'}">${user.status}</span></td>
-                    <td>
-                        <div class="info-cell">
-                            <div><span class="info-label">新增時間 :</span> ${user.date}</div>
-                            <div><span class="info-label">最後登錄 :</span> ${user.lastLogin}</div>
-                            <div><span class="info-label">離開天數 :</span> ${user.offlineDays}天</div>
-                            <div><span class="info-label">登錄IP :</span></div>
-                            <div class="ip-row" style="display: flex; align-items: center; gap: 4px;"><a href="#" class="ip-link" data-ip="${user.ip}" style="color: var(--primary-color); text-decoration: none;">${user.ip}</a> <i class="ph ph-copy copy-ip-btn" data-ip="${user.ip}" style="cursor: pointer; color: var(--text-muted);" title="複製IP"></i></div>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['status']) {
+                    nestedRowHtml += `<td>
+                        <span class="user-custom-tag ${user.status === '正常' ? 'tag-blue' : user.status === '冻结' ? 'tag-blue' : 'tag-red'}">${user.status}</span>
+                    </td>`;
+                }
+                if (nestedColumnVisibility['dateInfo']) {
+                    nestedRowHtml += `<td class="nested-cell-info">
+                        <div><span class="info-label">新增時間 :</span> ${user.date}</div>
+                        <div><span class="info-label">最後登錄 :</span> ${user.lastLogin}</div>
+                        <div><span class="info-label">離開天數 :</span> ${user.offlineDays}天</div>
+                        <div><span class="info-label">登錄IP :</span></div>
+                        <div class="ip-row" style="display: flex; align-items: center; gap: 4px;">
+                            <a href="#" class="ip-link" data-ip="${user.ip}" style="color: #2563eb; text-decoration: none;">${user.ip}</a>
+                            <i class="ph ph-arrow-square-out" style="color: #94a3b8; font-size: 13px;"></i>
                         </div>
-                    </td>
-                    <td>
-                        <div class="info-cell">
-                            <div><span class="info-label">備註 :</span> ${user.remark}</div>
-                            <div><span class="info-label">回訪備註 :</span> ${user.followRemark}</div>
-                            <div><span class="info-label">注 :</span> ${user.note}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="operations-grid">
-                            <a href="#" class="op-link user-detail-link" data-uid="${user.uid}">編輯用戶</a>
-                            <a href="#" class="op-link user-detail-link" data-uid="${user.uid}">查看詳情</a>
-                            <a href="#" class="op-link">額度修改</a>
-                            <a href="#" class="op-link">資金明細</a>
-                            <a href="#" class="op-link">注單明細</a>
-                            <a href="#" class="op-link">修改密碼</a>
-                            <a href="#" class="op-link">下級會員</a>
-                            <a href="#" class="op-link">下級報表</a>
-                            <a href="#" class="op-link">下級注單</a>
-                            <button class="btn-more">更多...</button>
-                        </div>
-                    </td>
-                `;
+                    </td>`;
+                }
+                if (nestedColumnVisibility['remark']) {
+                    nestedRowHtml += `<td class="nested-cell-info">
+                        <div><span class="info-label">備註 :</span> ${user.remark || '-'}</div>
+                        <div><span class="info-label">回訪備註 :</span> ${user.followRemark || '-'}</div>
+                        <div><span class="info-label">注 :</span> ${user.note || '-'}</div>
+                    </td>`;
+                }
+
+                nestedRowHtml += `<td style="text-align: center; padding: 12px 8px;">
+                    <div class="operations-grid-3x3">
+                        <a href="#" class="op-link user-detail-link" data-uid="${user.uid}">編輯用戶</a>
+                        <a href="#" class="op-link user-detail-link" data-uid="${user.uid}">查看詳情</a>
+                        <a href="#" class="op-link">額度修改</a>
+                        <a href="#" class="op-link">資金明細</a>
+                        <a href="#" class="op-link">注單明細</a>
+                        <a href="#" class="op-link">修改密碼</a>
+                        <a href="#" class="op-link">下級會員</a>
+                        <a href="#" class="op-link">下級報表</a>
+                        <a href="#" class="op-link">下級注單</a>
+                    </div>
+                    <button class="btn-more-op-wide">更多...</button>
+                </td>`;
+                tr.innerHTML = nestedRowHtml;
             } else {
                 // Compact Mode Layout
                 const pinned = [];
@@ -1159,6 +1225,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             userTableBody.appendChild(tr);
+        });
+
+        // Bind Header Columns Toggle Button (Image 2 Icon)
+        document.querySelectorAll('.btn-header-columns-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAllDropdowns();
+                const columnsDrawer = document.getElementById('columnsDrawer');
+                if (columnsDrawer) {
+                    if (currentTableMode === 'nested') {
+                        tempNestedColumnVisibility = { ...nestedColumnVisibility };
+                        tempNestedPinnedColumnIds = [ ...nestedPinnedColumnIds ];
+                    } else {
+                        tempCompactColumnVisibility = { ...compactColumnVisibility };
+                        tempPinnedColumnIds = [ ...pinnedColumnIds ];
+                    }
+                    renderDropdown();
+                    columnsDrawer.classList.add('active');
+                    if (overlay) overlay.classList.add('active');
+                }
+            });
         });
 
         // Bind Compact Mode Row Action Dropdown Events
@@ -1267,22 +1354,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetColumns = document.getElementById('resetColumns');
 
     function renderDropdown() {
-        if (!columnList) return;
-        if (nestedDropdownHtml === '') nestedDropdownHtml = columnList.innerHTML;
-
+        let html = '';
+        let visibleCount = 0;
+        
         if (currentTableMode === 'nested') {
-            columnList.innerHTML = nestedDropdownHtml;
-            columnList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                const colIndex = parseInt(checkbox.getAttribute('data-column'), 10);
-                checkbox.checked = columnVisibility[colIndex];
-            });
-            const visibleCount = Object.values(columnVisibility).filter(Boolean).length;
-            const cnt = document.getElementById('visibleColumnsCount');
-            if(cnt) cnt.textContent = visibleCount;
-        } else {
-            let html = '';
-            let visibleCount = 0;
+            const allChecked = nestedColumnsConfig.every(col => tempNestedColumnVisibility[col.id]);
+            const someChecked = nestedColumnsConfig.some(col => tempNestedColumnVisibility[col.id]);
+            const groupCbHtml = `<input type="checkbox" class="group-cb-nested" ${allChecked ? 'checked' : ''} style="margin-right:8px;">`;
             
+            html += `
+                <div class="column-group-header" style="display:flex; align-items:center; justify-content:space-between; margin: 16px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid var(--border-color); font-weight: bold;">
+                    <label style="display:flex; align-items:center; cursor:pointer;">
+                        ${groupCbHtml}
+                        巢狀模式欄位
+                    </label>
+                </div>
+            `;
+            html += `<ul class="column-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+            nestedColumnsConfig.forEach(col => {
+                const isVisible = tempNestedColumnVisibility[col.id];
+                if (isVisible) visibleCount++;
+                const isPinned = tempNestedPinnedColumnIds.includes(col.id);
+                
+                const checkboxHtml = `<input type="checkbox" class="compact-col-cb" data-id="${col.id}" ${isVisible ? 'checked' : ''}>`;
+                const labelSpanStyle = 'margin-left:8px; font-size:13px;';
+                const pinHtml = `<i class="ph ph-push-pin icon-pin ${isPinned ? 'active' : ''}" data-id="${col.id}" title="釘選欄位"></i>`;
+
+                html += `
+                    <li>
+                        <div class="dropdown-item-flex" style="padding-left: 8px; width: 100%;">
+                            <label style="display:flex; align-items:center; flex-grow:1; margin-right:4px;">${checkboxHtml} <span style="${labelSpanStyle}">${col.label}</span></label>
+                            ${pinHtml}
+                        </div>
+                    </li>
+                `;
+            });
+            html += `</ul>`;
+
+            const drawerContent = document.getElementById('columnsDrawerContent');
+            if (drawerContent) {
+                drawerContent.innerHTML = html;
+                const groupCb = drawerContent.querySelector('.group-cb-nested');
+                if (groupCb && !allChecked && someChecked) {
+                    groupCb.indeterminate = true;
+                }
+            }
+        } else {
             const groupedConfig = {};
             compactColumnsConfig.forEach(col => {
                 if (!groupedConfig[col.group]) groupedConfig[col.group] = [];
@@ -1356,7 +1473,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
-        
         }
     }
 
@@ -1387,35 +1503,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Delegated Checkbox changed
-    columnList.addEventListener('change', (e) => {
-        if (e.target.type === 'checkbox') {
-            if (currentTableMode === 'nested') {
-                const colIndex = parseInt(e.target.getAttribute('data-column'), 10);
-                columnVisibility[colIndex] = e.target.checked;
-                applyColumnVisibility();
-            } else {
-                const colId = e.target.getAttribute('data-id');
-                compactColumnVisibility[colId] = e.target.checked;
-                renderTable();
+    if (columnList) {
+        columnList.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') {
+                if (currentTableMode === 'nested') {
+                    const colIndex = parseInt(e.target.getAttribute('data-column'), 10);
+                    columnVisibility[colIndex] = e.target.checked;
+                    applyColumnVisibility();
+                } else {
+                    const colId = e.target.getAttribute('data-id');
+                    compactColumnVisibility[colId] = e.target.checked;
+                    renderTable();
+                }
+                renderDropdown(); // Update count
             }
-            renderDropdown(); // Update count
-        }
-    });
+        });
 
-    // Delegated Pin Click inside dropdown
-    columnList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('icon-pin')) {
-            e.stopPropagation();
-            const id = e.target.getAttribute('data-id');
-            if (pinnedColumnIds.includes(id)) {
-                pinnedColumnIds = pinnedColumnIds.filter(colId => colId !== id);
-            } else {
-                pinnedColumnIds.push(id);
+        // Delegated Pin Click inside dropdown
+        columnList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('icon-pin')) {
+                e.stopPropagation();
+                const id = e.target.getAttribute('data-id');
+                if (pinnedColumnIds.includes(id)) {
+                    pinnedColumnIds = pinnedColumnIds.filter(colId => colId !== id);
+                } else {
+                    pinnedColumnIds.push(id);
+                }
+                renderDropdown(); // Update UI in dropdown
+                renderTable(); // Update table
             }
-            renderDropdown(); // Update UI in dropdown
-            renderTable(); // Update table
-        }
-    });
+        });
+    }
 
     // Reset Defaults
     const resetAction = () => {
@@ -1434,7 +1552,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (resetIcon) resetIcon.addEventListener('click', resetAction);
 
     // Column List Search Filter
-    if (columnSearchInput) {
+    if (columnSearchInput && columnList) {
         columnSearchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             columnList.querySelectorAll('li').forEach(li => {
@@ -1459,36 +1577,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Search events
-    btnSearch.addEventListener('click', () => {
-        updateFilters();
-        renderTable();
-    });
-    btnApply.addEventListener('click', () => {
-        updateFilters();
-        renderTable();
-        closeDrawer();
-    });
-
-    // Sticky header with collapsible filter card logic using IntersectionObserver
-    const anchor = document.getElementById('filter-scroll-anchor');
-    const filterCard = document.querySelector('.filter-card');
-    if (anchor && filterCard) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.boundingClientRect.top < 0 && !entry.isIntersecting) {
-                    filterCard.classList.add('collapsed-sticky');
-                } else {
-                    filterCard.classList.remove('collapsed-sticky');
-                }
-            });
-        }, {
-            root: null,
-            threshold: 0,
-            rootMargin: '-170px 0px 0px 0px'
+    if (btnSearch) {
+        btnSearch.addEventListener('click', () => {
+            updateFilters();
+            renderTable();
         });
-        observer.observe(anchor);
+    }
+    if (btnApply) {
+        btnApply.addEventListener('click', () => {
+            updateFilters();
+            renderTable();
+            closeDrawer();
+        });
     }
 
+    // Sticky header with collapsible filter card logic
+    const filterCard = document.querySelector('.filter-card');
+    const tableWrapper = document.querySelector('.table-wrapper');
+    
+    if (tableWrapper && filterCard) {
+        tableWrapper.addEventListener('scroll', () => {
+            if (tableWrapper.scrollTop > 10) {
+                filterCard.classList.add('collapsed');
+            } else {
+                filterCard.classList.remove('collapsed');
+            }
+        });
+    }
     // Sidebar Group Collapse/Expand Toggles
     const navHeaders = document.querySelectorAll('.nav-item-header');
     navHeaders.forEach(header => {
@@ -1530,8 +1645,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize UI
+    setTableMode('nested');
     updateFilters();
-    renderTable();
+
+
 
     // Customize Filter Modal Logic
     const btnCustomizeFilter = document.getElementById('btnCustomizeFilter');
@@ -1551,9 +1668,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle Confirm
         btnCustomizeFilterConfirm.addEventListener('click', () => {
             const checkboxes = customizeFilterModal.querySelectorAll('.checkbox-item input[type="checkbox"]');
+            let allChecked = true;
             checkboxes.forEach(cb => {
                 const filterId = cb.value;
                 const isChecked = cb.checked;
+                
+                if (!isChecked) {
+                    allChecked = false;
+                }
                 
                 // Find all form groups and headers associated with this filter ID
                 const elements = document.querySelectorAll(`[data-filter-id="${filterId}"]`);
@@ -1565,6 +1687,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             });
+            
+            const btnAdvanced = document.getElementById('openAdvancedFilter');
+            if (btnAdvanced) {
+                btnAdvanced.style.display = allChecked ? 'none' : '';
+            }
+            
             closeModal();
         });
         
@@ -1577,17 +1705,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // User Edit Modal Logic
-    const userEditModal = document.getElementById('userEditModal');
+    const userEditDrawer = document.getElementById('userEditDrawer');
     const btnUserEditClose = document.getElementById('btnUserEditClose');
     const btnUserEditCancel = document.getElementById('btnUserEditCancel');
     const btnUserEditSave = document.getElementById('btnUserEditSave');
 
+    // Tab Switching inside Edit User Drawer
+    document.querySelectorAll('.user-edit-tab-item').forEach(tabBtn => {
+        tabBtn.addEventListener('click', () => {
+            document.querySelectorAll('.user-edit-tab-item').forEach(b => b.classList.remove('active'));
+            tabBtn.classList.add('active');
+            const tabTarget = tabBtn.getAttribute('data-tab');
+            const tabBasic = document.getElementById('tabContentBasic');
+            const tabSettings = document.getElementById('tabContentSettings');
+            if (tabTarget === 'basic') {
+                if (tabBasic) tabBasic.style.display = 'block';
+                if (tabSettings) tabSettings.style.display = 'none';
+            } else {
+                if (tabBasic) tabBasic.style.display = 'none';
+                if (tabSettings) tabSettings.style.display = 'block';
+            }
+        });
+    });
+
     function openUserEditModal(uid) {
-        if (!userEditModal) return;
+        if (!userEditDrawer) return;
         const user = (mockUsers || []).find(u => u.uid === uid) || (mockUsers && mockUsers[0]);
         if (!user) return;
 
-        const titleEl = document.getElementById('userEditModalTitle');
+        const titleEl = document.getElementById('userEditDrawerTitle');
         if (titleEl) titleEl.textContent = `編輯用戶詳情 - ${user.account}`;
         
         const accountEl = document.getElementById('editFormAccount');
@@ -1622,7 +1768,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const remarkIn = document.getElementById('editFormRemark');
         if (remarkIn) remarkIn.value = user.remark !== '-' ? user.remark : '';
 
-        userEditModal.classList.add('show');
+        // Reset to Basic Tab on open
+        const basicTabBtn = document.querySelector('.user-edit-tab-item[data-tab="basic"]');
+        if (basicTabBtn) basicTabBtn.click();
+
+        userEditDrawer.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+    }
+
+    function closeUserEditDrawer() {
+        if (userEditDrawer) userEditDrawer.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
     }
 
     // Delegated click listener for user links
@@ -1635,19 +1791,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    if (btnUserEditClose) btnUserEditClose.addEventListener('click', () => userEditModal.classList.remove('show'));
-    if (btnUserEditCancel) btnUserEditCancel.addEventListener('click', () => userEditModal.classList.remove('show'));
+    if (btnUserEditClose) btnUserEditClose.addEventListener('click', closeUserEditDrawer);
+    if (btnUserEditCancel) btnUserEditCancel.addEventListener('click', closeUserEditDrawer);
     if (btnUserEditSave) {
         btnUserEditSave.addEventListener('click', () => {
-            alert('用戶詳情已更新！');
-            userEditModal.classList.remove('show');
-        });
-    }
-    if (userEditModal) {
-        userEditModal.addEventListener('click', (e) => {
-            if (e.target === userEditModal) {
-                userEditModal.classList.remove('show');
-            }
+            showToast('用戶詳情已更新！');
+            closeUserEditDrawer();
         });
     }
 
@@ -1712,8 +1861,18 @@ if (drawerContent) {
     drawerContent.addEventListener('change', (e) => {
         if (e.target.classList.contains('compact-col-cb')) {
             const colId = e.target.getAttribute('data-id');
-            tempCompactColumnVisibility[colId] = e.target.checked;
+            if (currentTableMode === 'nested') {
+                tempNestedColumnVisibility[colId] = e.target.checked;
+            } else {
+                tempCompactColumnVisibility[colId] = e.target.checked;
+            }
             renderDropdown(); // Update drawer UI only
+        } else if (e.target.classList.contains('group-cb-nested')) {
+            const isChecked = e.target.checked;
+            nestedColumnsConfig.forEach(col => {
+                tempNestedColumnVisibility[col.id] = isChecked;
+            });
+            renderDropdown();
         } else if (e.target.classList.contains('group-cb')) {
             const groupName = e.target.getAttribute('data-group');
             const isChecked = e.target.checked;
@@ -1731,11 +1890,20 @@ if (drawerContent) {
         if (pinIcon) {
             e.stopPropagation();
             const colId = pinIcon.getAttribute('data-id');
-            const idx = tempPinnedColumnIds.indexOf(colId);
-            if (idx > -1) {
-                tempPinnedColumnIds.splice(idx, 1);
+            if (currentTableMode === 'nested') {
+                const idx = tempNestedPinnedColumnIds.indexOf(colId);
+                if (idx > -1) {
+                    tempNestedPinnedColumnIds.splice(idx, 1);
+                } else {
+                    tempNestedPinnedColumnIds.push(colId);
+                }
             } else {
-                tempPinnedColumnIds.push(colId);
+                const idx = tempPinnedColumnIds.indexOf(colId);
+                if (idx > -1) {
+                    tempPinnedColumnIds.splice(idx, 1);
+                } else {
+                    tempPinnedColumnIds.push(colId);
+                }
             }
             renderDropdown(); // Update drawer UI only
         }
@@ -1744,8 +1912,13 @@ if (drawerContent) {
 
 // Drawer Save Button Handler
 document.getElementById('btnColumnsDrawerSave')?.addEventListener('click', () => {
-    compactColumnVisibility = { ...tempCompactColumnVisibility };
-    pinnedColumnIds = [ ...tempPinnedColumnIds ];
+    if (currentTableMode === 'nested') {
+        nestedColumnVisibility = { ...tempNestedColumnVisibility };
+        nestedPinnedColumnIds = [ ...tempNestedPinnedColumnIds ];
+    } else {
+        compactColumnVisibility = { ...tempCompactColumnVisibility };
+        pinnedColumnIds = [ ...tempPinnedColumnIds ];
+    }
     renderTable();
     closeDrawer();
 });
@@ -1755,7 +1928,7 @@ let globalActionMenu = document.getElementById('globalCompactActionMenu');
 if (!globalActionMenu) {
     globalActionMenu = document.createElement('div');
     globalActionMenu.id = 'globalCompactActionMenu';
-    globalActionMenu.style.cssText = 'display:none;position:absolute;background:#fff;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(0,0,0,0.15);border-radius:6px;z-index:999999;padding:8px 0;min-width:160px;white-space:nowrap;max-height:300px;overflow-y:auto;text-align:left;';
+    globalActionMenu.style.cssText = 'display:none;position:fixed;background:#fff;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(0,0,0,0.15);border-radius:6px;z-index:999999;padding:8px 0;min-width:160px;white-space:nowrap;max-height:300px;overflow-y:auto;text-align:left;';
     
     const compactActionItems = [
         "编辑用户", "查看详情", "额度修改", "资金明细", "注单明细", "修改密码", "下级会员", "下级报表", "下级注单",
@@ -1780,9 +1953,10 @@ if (!globalActionMenu) {
         clearTimeout(hideTimeout);
         const rect = iconEl.getBoundingClientRect();
         globalActionMenu.style.display = 'block';
-        globalActionMenu.style.top = (rect.bottom + window.scrollY + 4) + 'px';
-        globalActionMenu.style.left = (rect.right + window.scrollX - globalActionMenu.offsetWidth) + 'px';
+        globalActionMenu.style.top = (rect.bottom + 4) + 'px';
+        globalActionMenu.style.left = (rect.right - globalActionMenu.offsetWidth) + 'px';
     };
+
 
     document.addEventListener('mouseover', (e) => {
         const icon = e.target.closest('.compact-action-icon');
@@ -1804,6 +1978,15 @@ const mainLayout = document.querySelector('.main-layout');
 if (btnSidebarToggle && mainLayout) {
     btnSidebarToggle.addEventListener('click', () => {
         mainLayout.classList.toggle('sidebar-collapsed');
+    });
+}
+
+// Bottom Stats Bar Toggle Logic
+const btnToggleStats = document.getElementById('btnToggleStats');
+const bottomStatsBar = document.getElementById('bottomStatsBar');
+if (btnToggleStats && bottomStatsBar) {
+    btnToggleStats.addEventListener('click', () => {
+        bottomStatsBar.classList.toggle('collapsed');
     });
 }
 
