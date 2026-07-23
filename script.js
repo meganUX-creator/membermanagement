@@ -1204,10 +1204,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 let currentLeft = 40;
                 pinned.forEach(col => {
                     let cellStr = col.render(user);
-                    if (cellStr.includes('class="')) {
-                        cellStr = cellStr.replace('class="', `style="left:${currentLeft}px; min-width:110px;" class="sticky-col `);
+                    const match = cellStr.match(/^<td([^>]*?)class="([^"]*)"/);
+                    if (match) {
+                        cellStr = cellStr.replace(/^<td([^>]*?)class="/, `<td$1style="left:${currentLeft}px; min-width:110px;" class="sticky-col `);
                     } else {
-                        cellStr = cellStr.replace('<td', `<td style="left:${currentLeft}px; min-width:110px;" class="sticky-col"`);
+                        cellStr = cellStr.replace(/^<td/, `<td style="left:${currentLeft}px; min-width:110px;" class="sticky-col"`);
                     }
                     cellsHtml += cellStr;
                     currentLeft += 110;
