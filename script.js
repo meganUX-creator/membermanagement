@@ -632,8 +632,8 @@ document.addEventListener('DOMContentLoaded', () => {
             advancedCount++;
         }
         if (inputDateStart.value || inputDateEnd.value) {
-            const startStr = inputDateStart.value ? inputDateStart.value.substring(5) : '??';
-            const endStr = inputDateEnd.value ? inputDateEnd.value.substring(5) : '??';
+            const startStr = inputDateStart.value ? inputDateStart.value.replace('T', ' ') : '??';
+            const endStr = inputDateEnd.value ? inputDateEnd.value.replace('T', ' ') : '??';
             tags.push({ 
                 key: 'dateRange', 
                 label: `時間: ${startStr} ~ ${endStr}`, 
@@ -684,8 +684,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tags.push({ key: 'birthdayOuter', label: `生日: ${selectedBirthdayOuterVal}月`, type: 'single-custom', element: dropdownBirthdayOuter, defaultValue: '', defaultText: '全部', valueVarSetter: (v) => selectedBirthdayOuterVal = v });
         }
         if (inputDateStartOuter && inputDateEndOuter && (inputDateStartOuter.value || inputDateEndOuter.value)) {
-            const startStr = inputDateStartOuter.value ? inputDateStartOuter.value : '??';
-            const endStr = inputDateEndOuter.value ? inputDateEndOuter.value : '??';
+            const startStr = inputDateStartOuter.value ? inputDateStartOuter.value.replace('T', ' ') : '??';
+            const endStr = inputDateEndOuter.value ? inputDateEndOuter.value.replace('T', ' ') : '??';
             tags.push({ 
                 key: 'dateRangeOuter', 
                 label: `新增時間: ${startStr} ~ ${endStr}`, 
@@ -859,9 +859,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Advanced Filters
+            const formattedDateStart = dateStartVal ? dateStartVal.replace('T', ' ') : '';
+            const formattedDateEnd = dateEndVal ? dateEndVal.replace('T', ' ') : '';
             if (birthdayVal && user.birthday !== birthdayVal) return false;
-            if (dateStartVal && user.date < dateStartVal) return false;
-            if (dateEndVal && user.date > dateEndVal) return false;
+            if (formattedDateStart && user.date < formattedDateStart) return false;
+            if (formattedDateEnd && user.date > formattedDateEnd) return false;
             if (quickLoginVal && user.quickLogin !== quickLoginVal) return false;
             if (uidVal && user.uid !== uidVal) return false;
             if (inviteCodeVal && user.inviteCode !== inviteCodeVal) return false;
@@ -1989,5 +1991,39 @@ if (btnToggleStats && bottomStatsBar) {
         bottomStatsBar.classList.toggle('collapsed');
     });
 }
+
+// Allow clicking anywhere in date range containers to open the native date/time picker
+document.querySelectorAll('.date-range-container, .date-range-input').forEach(container => {
+    container.addEventListener('click', (e) => {
+        const inputs = container.querySelectorAll('input[type="datetime-local"], input[type="date"]');
+        if (inputs.length > 0) {
+            if (e.target === container || e.target.classList.contains('inline-label') || e.target.classList.contains('date-separator-line') || e.target.classList.contains('separator')) {
+                const rect = container.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const targetInput = (clickX > rect.width / 2 && inputs.length > 1) ? inputs[1] : inputs[0];
+                if (typeof targetInput.showPicker === 'function') {
+                    try {
+                        targetInput.showPicker();
+                    } catch (err) {
+                        console.error("showPicker error: ", err);
+                    }
+                }
+            }
+        }
+    });
+});
+
+document.querySelectorAll('input[type="datetime-local"], input[type="date"]').forEach(input => {
+    input.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (typeof input.showPicker === 'function') {
+            try {
+                input.showPicker();
+            } catch (err) {
+                console.error("showPicker error: ", err);
+            }
+        }
+    });
+});
 
 });

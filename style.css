@@ -99,6 +99,11 @@ body {
     min-width: 220px;
 }
 
+.filter-row .form-group[data-filter-id="registerTime"] {
+    flex: 0 0 calc(50% - 10px);
+    min-width: 440px;
+}
+
 .form-group label {
     font-size: 13px;
     font-weight: 600;
@@ -1774,6 +1779,8 @@ table tr td:nth-child(9) {
     flex: 1;
     color: var(--text-light);
     font-size: 13px;
+    min-width: 150px;
+    width: 100%;
 }
 .date-range-container i {
     color: var(--text-light);
